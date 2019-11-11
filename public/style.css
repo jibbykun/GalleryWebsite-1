@@ -176,3 +176,17 @@ h3 {
   cursor: pointer;
   background: #00aeff;
 }
+/* Do not delete - for validation messages */
+.msg-success {
+  border: 1px solid green;
+  font-weight: bold;
+  color: green;
+  padding: 1em;
+}
+
+.msg-danger {
+  border: 1px solid red;
+  font-weight: bold;
+  color: red;
+  padding: 1em;
+}
