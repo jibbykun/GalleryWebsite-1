@@ -190,3 +190,86 @@ h3 {
   color: red;
   padding: 1em;
 }
+
+
+/* ************************************************************************************************************************************************************ */
+
+  /*Menu Customisation */
+  #sidemenu{
+    position: fixed;
+    width: 200px;
+    height: 100%;
+    background: darkgrey;
+    transition: all 100ms linear;
+    left: -210px;
+    top: 0px;
+   }
+   /* The text within the menu */
+   #sidemenu ul li{
+    color: black;
+    padding:  20px;
+    padding-left: 0px;
+    border-bottom: 1px solid rgba(100,100,100,0.3);
+   }
+   /*  */
+   #sidemenu.active{
+    left: 0px;
+   }
+   /* Position of sidemenu Button */
+   #sidemenu .toggle-btn{
+    position: absolute;
+    left: 230px;
+    top: 10px;
+   }
+   /* The sidemenu button */
+   #sidemenu .toggle-btn span{
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+    display: block;
+    width: 30px;
+    margin: 5px 0px;
+    height: 5px;
+    padding-left: 5px;
+    background: #4CAF50;
+    -webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s;
+    cursor: pointer;
+   }
+
+   .blockoftext {
+    font-size: xx-large;
+  }
+
+  .aboutimage {
+    width: 30%;
+    height: auto;
+    align-items: center;
+    float: left;
+    margin-right: 10px;
+  }
+
+  .aboutheader {
+    padding: 90px;
+    margin-top: 70px;
+    margin: 0px;
+    text-align: center;
+    background: black;
+    color: white;
+    font-size: 50px;
+  }
+
+  .aboutheader3 {
+    text-align: center;
+    color: black;
+    font-size: 40px;
+    text-decoration: underline;
+  }
+
+.aboutheader {
+    padding: 90px;
+    margin-top: 70px;
+    margin: 0px;
+    text-align: center;
+    background: black;
+    color: white;
+    font-size: 50px;
+  }
