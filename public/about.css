@@ -29,14 +29,14 @@ footer {
     font-size: 20px;
 }
 
-h3 {
+.aboutheader3 {
     text-align: center;
     color: black;
     font-size: 40px;
     text-decoration: underline;
   }
 
-h1,h2 {
+.aboutheader {
     padding: 90px;
     margin-top: 70px;
     margin: 0px;
@@ -52,11 +52,11 @@ h1,h2 {
     margin-right: auto;
   }
 
-  p {
+  .blockoftext {
     font-size: xx-large;
   }
 
-  img {
+  .aboutimage {
     width: 30%;
     height: auto;
     align-items: center;
