@@ -180,31 +180,68 @@ router.post('/uploadItem', koaBody, async ctx => {
 	try {
 		const body = ctx.request.body
 		console.log(body)
-		// process the file
-		const {path, type} = ctx.request.files.image
-		const fileExtension = mime.extension(type)
-		console.log(`path: ${path}`)
-		console.log(`type: ${type}`)
-		console.log(`fileExtension: ${fileExtension}`)
-		// get the current date for the filename, so it is unique
-		var time = new Date();
-		const dir = ctx.session.user + time.getFullYear().toString() + time.getMonth().toString() + time.getDay().toString() + time.getTime().toString()
-		const fileDir = 'public/Items/item_' + dir + '.png'
-		console.log(fileDir)
-		await fs.copy(path, fileDir)
-		const db = await Database.open(dbName)
+		// check the number of images they attempted to upload - max 3
+		var count = ctx.request.files.image.length
+		if (count > 3)
+			return ctx.redirect("/sell?errorMsg=Max number of images 3")
+		// Run through a loop for how many images they uploaded
+		var dbDir = ["", "", ""];
+		if (count == null)
+		{
+			// Theres no length if only one image - but also check if there is actually at least one image
+			if (ctx.request.files.image == null)
+				return ctx.redirect("/sell?errorMsg=Please upload an image")
+			else
+			{
+				// process the file
+				const {path, type} = ctx.request.files.image
+				const fileExtension = mime.extension(type)
+				console.log(`path: ${path}`)
+				console.log(`type: ${type}`)
+				console.log(`fileExtension: ${fileExtension}`)
+				// get the current date for the filename, so it is unique
+				var time = new Date();
+				const dir = ctx.session.user + time.getFullYear().toString() + time.getMonth().toString() + time.getDay().toString() + time.getTime().toString() + 0
+				const fileDir = 'public/Items/item_' + dir + '.png'
+				console.log(fileDir)
+				await fs.copy(path, fileDir)
+				
+				// Directory for image to go in db
+				dbDir[0] = 'Items/item_' + dir + '.png'
+			}
+		}
+		for (var i = 0; i < count; i++) {
+			// process the file
+			const {path, type} = ctx.request.files.image[i]
+			const fileExtension = mime.extension(type)
+			console.log(`path: ${path}`)
+			console.log(`type: ${type}`)
+			console.log(`fileExtension: ${fileExtension}`)
+			// get the current date for the filename, so it is unique
+			var time = new Date();
+			const dir = ctx.session.user + time.getFullYear().toString() + time.getMonth().toString() + time.getDay().toString() + time.getTime().toString() + i
+			const fileDir = 'public/Items/item_' + dir + '.png'
+			console.log(fileDir)
+			await fs.copy(path, fileDir)
+			
+			// Directory for image to go in db
+			dbDir[i] = 'Items/item_' + dir + '.png'
+			
+		}
+		
 		// get the userID from the db
+		const db = await Database.open(dbName)
 		const record = await db.get(`SELECT userID FROM users WHERE username = "${ctx.session.user}";`)
 		console.log(record)
-		// Directory for image to go in db
-		const dbDir = 'Items/item_' + dir + '.png'
+
 		// insert the item into the db including the userID
-		await db.run(`INSERT INTO items(item, price, imageDir, userID) VALUES("${body.item}", "${body.price}", "${dbDir}", "${record.userID}")`)
+		await db.run(`INSERT INTO items(item, price, imageDir1, imageDir2, imageDir3, userID) VALUES("${body.item}", "${body.price}", "${dbDir[0]}", "${dbDir[1]}", "${dbDir[2]}", "${record.userID}")`)
 		await db.close()
 
 		// redirect to my items page
 		ctx.redirect(`/myItems?successMsg=item uploaded successfully`)
 	} catch(err) {
+		console.log(err.message)
 		await ctx.render('error', {message: err.message})
 	}
 })
@@ -236,12 +273,25 @@ router.get('/:id', async ctx => {
 		if(record === undefined) throw new Error('unrecogised item')
 		const itemUser = await db.get(`SELECT * FROM users WHERE userID = ${record.userID};`)
 		// set the data - item info + user info
+		data.item = record.item
+		data.year = record.year
+		data.price = record.price
+		data.artist = record.artist
+		data.medium = record.medium
+		data.size = record.size
+		data.itemID = record.itemID
+		data.sDescription = record.sDescription
+		data.lDescription = record.lDescription
+		
+		data.imageDir1 = record.imageDir1
+		data.imageDir2 = record.imageDir2
+		data.imageDir3 = record.imageDir3
+		data.imageDir4 = record.imageDir4
+		data.imageDir5 = record.imageDir5
+
+
 		data.username = itemUser.username
 		data.picDir = 'ProfilePictures/' + itemUser.profilePicture + '.png'
-		data.item = record.item
-		data.price = record.price
-		data.imageDir = record.imageDir
-
 		await ctx.render('itemDetails', data)
 	} catch(err) {
 		console.error(err.message)
@@ -254,7 +304,7 @@ module.exports = app.listen(port, async() => {
 	// create the db if it doesnt exist - for users running first time
 	const db = await Database.open(dbName)
 	await db.run('CREATE TABLE IF NOT EXISTS users (userID INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, password TEXT, profilePicture TEXT);')
-	await db.run('CREATE TABLE IF NOT EXISTS items (itemID INTEGER PRIMARY KEY AUTOINCREMENT, item TEXT, price TEXT, imageDir TEXT, userID INTEGER);')
+	await db.run('CREATE TABLE IF NOT EXISTS items (itemID INTEGER PRIMARY KEY AUTOINCREMENT, userID INTEGER, item TEXT, year INTEGER, price TEXT, artist TEXT, medium TEXT, size TEXT, sDescription TEXT, lDescription TEXT, imageDir1 TEXT, imageDir2 TEXT, imageDir3 TEXT);')
 	await db.close()
 	console.log(`listening on port ${port}`)
 })
