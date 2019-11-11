@@ -23,27 +23,73 @@
             <a href="#contact">Contact</a> |
         </nav>
 
-        <h1>Item Details</h1>
-        <div class="gallery">
-        <a target="_blank" href="{{imageDir}}">
-            <img src="{{imageDir}}" alt="No picture found" width="600" height="400">
-        </a>
-        <div class="desc">Name: {{item}} Price: {{price}}</div>
-        </div>
+        <div class="detail_top">
+            <div class="detail_image_previews">
 
-        <h1>Seller Details</h1>
-        <p>Username: {{username}}</p>
-        <p>Current Profile Picture</p>
-          <a target="_blank" href="{{picDir}}">
-             <img src="{{picDir}}" alt="No profile picture" width="600" height="400">
-         </a>
+            </div>
+            <div class="detail_image_main">
+                <img id="detail_image_main-id" src="{{imageDir1}}" alt="No picture found"/>
+            </div>
+                <div class="detail_description">
+                <h3>{{name}} ({{year}})</h3>
+                <p>{{sDescription}}</p>
+                <p>Price: {{price}}</p>
+                <p>Artist: {{artist}}</p>
+                <p>Medium: {{medium}}</p>
+                <p>Size: {{size}}</p>
+                <p>Reference: #{{itemID}}</p>
+                <button id="detail_description-addtobasket">Add to basket</button>
+                <button id="detail_description-favourite">Favourite</button>
+            </div>
+        </div>
+        <div class="detail_bottom">
+            <div class="detail_more_description">
+                <h3>Description</h3>
+                <p>{{lDescription}}</p>
+            </div>
+            <div class="detail_seller">
+                <h3>Seller Details</h3>
+                <p>Username: {{username}}</p>
+                <p>Current Profile Picture</p>
+                <a target="_blank" href="{{picDir}}">
+                    <img src="{{picDir}}" alt="No profile picture" width="600" height="400">
+                </a>
+                <button id="detail_seller-contact">Contact</button>
+            </div>
+        </div>
 
     </section>
 </body>
 
 <footer> 
-    <br>
-    <br>
-    <a href="http://localhost:8080">Click here to go Home</a>
+
 </footer>
+<script>
+    const mainPic = document.getElementsByClassName("detail_image_main")[0].children[0]
+    const previewPicParent = document.getElementsByClassName("detail_image_previews")[0]
+    const previewPics = previewPicParent.children
+    const previews = ["{{imageDir1}}", "{{imageDir2}}", "{{imageDir3}}", "{{imageDir4}}", "{{imageDir5}}"]
+
+    for(let i = 0; i < previews.length; i++){
+        if(previews !== undefined){
+            let newPreviewPic = document.createElement("img");
+            previewPicParent.appendChild(newPreviewPic)
+            newPreviewPic.src = previews[i]
+            if(i > 0){
+                newPreviewPic.classList.add("inactive")
+            }
+        }
+    }
+
+    for(let i = 0; i < previews.length; i++){
+        previewPics[i].addEventListener('click', e => {
+            mainPic.src = previews[i]
+            for(let j = 0; j < previews.length; j++){
+                previewPics[j].classList.add("inactive");
+            }
+            previewPics[i].classList.remove("inactive");
+        });
+    }
+
+</script>
 </html>

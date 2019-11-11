@@ -28,9 +28,19 @@
 			<li>{{item}}</li>
             <li>{{price}}</li>
             <li>          
-                <a target="_blank" href="{{imageDir}}">
-                    <img src="{{imageDir}}" alt="No item picture" width="600" height="400">
+                <a target="_blank" href="{{imageDir1}}">
+                    <img src="{{imageDir1}}" alt="No item picture" width="600" height="400">
                 </a>
+                {{#if imageDir2}}
+ 			        <a target="_blank" href="{{imageDir2}}">
+                        <img src="{{imageDir2}}" alt="No item picture" width="600" height="400">
+                    </a>
+		        {{/if}}
+                {{#if imageDir3}}
+ 			        <a target="_blank" href="{{imageDir3}}">
+                        <img src="{{imageDir3}}" alt="No item picture" width="600" height="400">
+                    </a>
+		        {{/if}}
             </li>
 		{{/each}}
     </section>
