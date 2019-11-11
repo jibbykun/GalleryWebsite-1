@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8", name="viewport" content="width=device-width, initial-scale=1">
+<title>Sell an item</title><html>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+<body>
+    	{{#if successMsg}}
+ 			<p class="msg-success">{{successMsg}}</p>
+		{{/if}}
+        {{#if errorMsg}}
+ 			<p class="msg-danger">{{errorMsg}}</p>
+		{{/if}}
+
+    <section class="container">
+
+        <nav class="side">
+            <a href="about">About</a> |
+            <a href="#services">Services</a> |
+            <a href="login">Login</a> |
+            <a href="register">Sign Up</a> |
+            <a href="#contact">Contact</a> |
+        </nav>
+
+        <h1>Sell an item</h1>
+        <hr>
+		<form action="/uploadItem" enctype="multipart/form-data" method="post">
+			<p>Item:<br /><input type="text" name="item" value=""></p>
+            <p>Price:<br /><input type="text" name="price"  value="£"></p>
+			<p>Item image:<br /><input type="file" name="image"></p>
+			<p><input type="submit" value="Upload"></p>
+		</form>
+    </section>
+</body>
+
+<footer> 
+    <br>
+    <br>
+    <a href="http://localhost:8080">Click here to go Home</a>
+</footer>
+</html>

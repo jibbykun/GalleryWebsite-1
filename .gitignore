@@ -1,0 +1,30 @@
+# NodeJS related files and directories
+node_modules/
+package-lock.json
+.node-persist/
+data/
+coverage/
+docs/
+sessions/
+screenshots/*
+out/
+
+# sqlite databases
+# *.db
+
+# Mac spotlight files
+.DS_Store
+
+# Windows thumbnail db
+Thumbs.db
+website.db
+
+*.pptx
+*.mp4
+
+# IDE setting files
+*.codio
+*.c9
+
+messages.txt
+todo.db

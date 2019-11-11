@@ -1,0 +1,32 @@
+{
+  "name": "gallerywebsite",
+  "version": "1.0.0",
+  "description": "Gallery project coming soon...",
+  "main": "index.js",
+  "dependencies": {
+    "bcrypt": "^3.0.6",
+    "bcrypt-promise": "^2.0.0",
+    "fs-extra": "^8.1.0",
+    "koa": "^2.10.0",
+    "koa-body": "^4.1.1",
+    "koa-bodyparser": "^4.2.1",
+    "koa-hbs-renderer": "^1.2.0",
+    "koa-router": "^7.4.0",
+    "koa-session": "^5.12.3",
+    "koa-static": "^5.0.0",
+    "koa-views": "^6.2.1",
+    "node-pre-gyp": "^0.14.0",
+    "sqlite-async": "^1.0.12",
+    "sqlite3": "^4.1.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.coventry.ac.uk/tsykunoi/GalleryWebsite.git"
+  },
+  "author": "",
+  "license": "ISC"
+}
