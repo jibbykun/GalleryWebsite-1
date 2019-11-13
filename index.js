@@ -35,8 +35,9 @@ router.get('/', async ctx => {
 		if(ctx.query.successMsg) data.successMsg = ctx.query.successMsg
 		// get all the items
 		const db = await Database.open(dbName)
-		const records = await db.all(`SELECT * FROM items;`)
-		await ctx.render('index', {items: records})
+		const records = await db.all(`SELECT * FROM items WHERE status = true;`)
+		data.authorised = ctx.session.authorised
+		await ctx.render('index', {items: records, data: data})
 	} catch(err) {
 		console.log(err.message)
 		await ctx.render('error', {message: err.message})
@@ -44,6 +45,8 @@ router.get('/', async ctx => {
 })
 
 router.get('/logout', async ctx => {
+	if(ctx.session.authorised !== true) 
+		return ctx.redirect('/login?errorMsg=you are not logged in')
 	// reset the session
 	ctx.session.authorised = null
 	ctx.session.user = null
@@ -51,21 +54,45 @@ router.get('/logout', async ctx => {
 	ctx.redirect('/login?successMsg=You have successfully logged out')	
 })
 
-router.get('/about', async ctx => await ctx.render('about'))
+router.get('/about', async ctx =>{ 
+	const data = {}
+	data.authorised = ctx.session.authorised
+	await ctx.render('about', data)
+})
+
+router.get('/contact', async ctx =>{ 
+	const data = {}
+	data.authorised = ctx.session.authorised
+	await ctx.render('contact', data)
+})
 
 router.get('/register', async ctx => {
+	if(ctx.session.authorised == true) 
+		return ctx.redirect('/')
 	// Check for validation messages
 	const data = {}
 	if(ctx.query.errorMsg) data.errorMsg = ctx.query.errorMsg
 	if(ctx.query.successMsg) data.successMsg = ctx.query.successMsg
+	data.authorised = ctx.session.authorised
 	await ctx.render('register', data)
 })
 
 router.post('/register', async ctx => {
+	if(ctx.session.authorised == true) 
+		return ctx.redirect('/')
 	try {
 		console.log(ctx.request.body)
 		const body = ctx.request.body
 		const db = await Database.open(dbName)
+		// check if the password is at least 10 characters long
+		if (body.password.length < 10)
+			return ctx.redirect("/register?errorMsg=Password must be at least 10 characters")
+		// check if the password contains an uppercase character
+		if (!/[A-Z]/.test(body.password))
+			return ctx.redirect("/register?errorMsg=Password must contain at least one uppercase character")
+		// check if the password contains a number
+		if (!/\d/.test(body.password))
+			return ctx.redirect("/register?errorMsg=Password must contain at least one number")
 		// check if the passwords match
 		if (body.password != body.passwordRepeat)
 			return ctx.redirect("/register?errorMsg=Passwords do not match")
@@ -76,8 +103,8 @@ router.post('/register', async ctx => {
 		// encrypt the password
 		body.password = await bcrypt.hash(body.password, saltRounds)
 		// insert the user into the db - success!
-		const sql = `INSERT INTO users(username, password, profilePicture) 
-			VALUES("${body.username}", "${body.password}", "pic_${body.username}");`
+		const sql = `INSERT INTO users(username, password, profilePicture, paypalUsername) 
+			VALUES("${body.username}", "${body.password}", "pic_${body.username}", "${body.paypalUsername}");`
 		console.log(sql)
 		await db.run(sql)
 		await db.close()
@@ -88,14 +115,19 @@ router.post('/register', async ctx => {
 })
 
 router.get('/login', async ctx => {
+	if(ctx.session.authorised == true) 
+		return ctx.redirect('/')
 	// Check for validation messages
 	const data = {}
 	if(ctx.query.errorMsg) data.errorMsg = ctx.query.errorMsg
 	if(ctx.query.successMsg) data.successMsg = ctx.query.successMsg
+	data.authorised = ctx.session.authorised
 	await ctx.render('login', data)  
 })
 
 router.post('/login', async ctx => {
+	if(ctx.session.authorised == true) 
+		return ctx.redirect('/')
 	try {
 		const body = ctx.request.body
 		const db = await Database.open(dbName)
@@ -120,19 +152,24 @@ router.post('/login', async ctx => {
 })
 
 router.get('/account', async ctx => {
+	if(ctx.session.authorised !== true) 
+		return ctx.redirect('/login?errorMsg=you are not logged in')
 	// Check for validation messages
 	const data = {}
 	if(ctx.query.errorMsg) data.errorMsg = ctx.query.errorMsg
 	if(ctx.query.successMsg) data.successMsg = ctx.query.successMsg
+	data.authorised = ctx.session.authorised
 	await ctx.render('account', data)  
 })
 
 router.get('/profilePic', async ctx => {
+	if(ctx.session.authorised !== true) 
+		return ctx.redirect('/login?errorMsg=you are not logged in')
 	// Check for validation messages
 	const data = {}
 	if(ctx.query.errorMsg) data.errorMsg = ctx.query.errorMsg
 	if(ctx.query.successMsg) data.successMsg = ctx.query.successMsg
-
+	data.authorised = ctx.session.authorised
 	// get the directory from the db
 	const db = await Database.open(dbName)
 	const record = await db.get(`SELECT profilePicture FROM users WHERE username = "${ctx.session.user}";`)
@@ -144,6 +181,8 @@ router.get('/profilePic', async ctx => {
 })
 
 router.post('/uploadProfilePic', koaBody, async ctx => {
+	if(ctx.session.authorised !== true) 
+		return ctx.redirect('/login?errorMsg=you are not logged in')
 	try {
 		const body = ctx.request.body
 		console.log(body)
@@ -169,14 +208,19 @@ router.post('/uploadProfilePic', koaBody, async ctx => {
 })
 
 router.get('/sell', async ctx => {
+	if(ctx.session.authorised !== true) 
+		return ctx.redirect('/login?errorMsg=you are not logged in')
 	// Check for validation messages
 	const data = {}
 	if(ctx.query.errorMsg) data.errorMsg = ctx.query.errorMsg
 	if(ctx.query.successMsg) data.successMsg = ctx.query.successMsg
+	data.authorised = ctx.session.authorised
 	await ctx.render('sell', data)  
 })
 
 router.post('/uploadItem', koaBody, async ctx => {
+	if(ctx.session.authorised !== true) 
+		return ctx.redirect('/login?errorMsg=you are not logged in')
 	try {
 		const body = ctx.request.body
 		console.log(body)
@@ -235,7 +279,7 @@ router.post('/uploadItem', koaBody, async ctx => {
 		console.log(record)
 
 		// insert the item into the db including the userID
-		await db.run(`INSERT INTO items(item, price, imageDir1, imageDir2, imageDir3, userID) VALUES("${body.item}", "${body.price}", "${dbDir[0]}", "${dbDir[1]}", "${dbDir[2]}", "${record.userID}")`)
+		await db.run(`INSERT INTO items(item, price, imageDir1, imageDir2, imageDir3, userID, status) VALUES("${body.item}", "${body.price}", "${dbDir[0]}", "${dbDir[1]}", "${dbDir[2]}", "${record.userID}", true)`)
 		await db.close()
 
 		// redirect to my items page
@@ -247,12 +291,16 @@ router.post('/uploadItem', koaBody, async ctx => {
 })
 
 router.get('/myItems', async ctx => {
+	if(ctx.session.authorised !== true) 
+		return ctx.redirect('/login?errorMsg=you are not logged in')
 	try {
 		const db = await Database.open(dbName)
 		// get the userID from the db
+		const data = {}
 		const record = await db.get(`SELECT userID FROM users WHERE username = "${ctx.session.user}";`)
-		const data = await db.all(`SELECT * FROM items WHERE userID = "${record.userID}";`)
-		await ctx.render('myItems', {items: data})
+		const item = await db.all(`SELECT * FROM items WHERE userID = "${record.userID}";`)
+		data.authorised = ctx.session.authorised
+		await ctx.render('myItems', {items: item, data: data})
 	} catch(err) {
 		console.error(err.message)
 		await ctx.render('error', {message: err.message})
@@ -292,6 +340,10 @@ router.get('/:id', async ctx => {
 
 		data.username = itemUser.username
 		data.picDir = 'ProfilePictures/' + itemUser.profilePicture + '.png'
+
+		if(ctx.query.errorMsg) data.errorMsg = ctx.query.errorMsg
+		if(ctx.query.successMsg) data.successMsg = ctx.query.successMsg
+		data.authorised = ctx.session.authorised
 		await ctx.render('itemDetails', data)
 	} catch(err) {
 		console.error(err.message)
@@ -299,12 +351,36 @@ router.get('/:id', async ctx => {
 	}
 })
 
+router.get('/buy/:id', async ctx => {
+	if(ctx.session.authorised !== true) 
+		return ctx.redirect('/login?errorMsg=you are not logged in')
+		try {
+			const db = await Database.open(dbName)
+			console.log(`item id: ${ctx.params.id}`)
+			const record = await db.get(`SELECT * FROM items WHERE itemID = ${ctx.params.id};`)
+			// check if the item exists
+			if(record === undefined) throw new Error('unrecogised item')
+			// check if the item is for sale
+			if(record.status === false) 
+				return ctx.redirect(`/${ctx.params.id}?errorMsg=Item not for sale`)
+			const itemUser = await db.get(`SELECT * FROM users WHERE userID = ${record.userID};`)
+			if (itemUser.username === ctx.session.user) 
+				return ctx.redirect(`/${ctx.params.id}?errorMsg=Seller cannot buy their own item`)
+			await db.get(`UPDATE items SET status = false WHERE itemID = ${ctx.params.id};`)
+
+			ctx.redirect('/?successMsg=item purchased')
+		} catch(err) {
+			console.error(err.message)
+			await ctx.render('error', {message: err.message})
+		}
+
+})
 
 module.exports = app.listen(port, async() => {
 	// create the db if it doesnt exist - for users running first time
 	const db = await Database.open(dbName)
-	await db.run('CREATE TABLE IF NOT EXISTS users (userID INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, password TEXT, profilePicture TEXT);')
-	await db.run('CREATE TABLE IF NOT EXISTS items (itemID INTEGER PRIMARY KEY AUTOINCREMENT, userID INTEGER, item TEXT, year INTEGER, price TEXT, artist TEXT, medium TEXT, size TEXT, sDescription TEXT, lDescription TEXT, imageDir1 TEXT, imageDir2 TEXT, imageDir3 TEXT);')
+	await db.run('CREATE TABLE IF NOT EXISTS users (userID INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, password TEXT, profilePicture TEXT, paypalUsername TEXT);')
+	await db.run('CREATE TABLE IF NOT EXISTS items (itemID INTEGER PRIMARY KEY AUTOINCREMENT, userID INTEGER, item TEXT, year INTEGER, price TEXT, artist TEXT, medium TEXT, size TEXT, sDescription TEXT, lDescription TEXT, imageDir1 TEXT, imageDir2 TEXT, imageDir3 TEXT, status BOOLEAN);')
 	await db.close()
 	console.log(`listening on port ${port}`)
 })

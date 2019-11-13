@@ -1,64 +1,60 @@
 <!DOCTYPE html>
 <html>
-<head>
-<meta charset="UTF-8", name="viewport" content="width=device-width, initial-scale=1">
-<title>WebX Gallery</title><html>
+    <head>
+        <meta charset="UTF-8", content="width=device-width, initial-scale=1">
+        <title>Home</title><html>
+        <link rel="stylesheet" type="text/css" href="style.css">
+        <script type="text/javascript">
+            function toggleSidemenu(){ 
+                document.getElementById("sidemenu").classList.toggle('active')
+                if (document.getElementById("sidemenu").classList == 'active')
+                    document.getElementById("body").style.marginLeft = "200px";
+                else
+                    document.getElementById("body").style.marginLeft = "5px";
+            }
+        </script>
 
-</head>
-<link rel="stylesheet" type="text/css" href="style.css">
-<body>
-    {{#if successMsg}}
- 			<p class="msg-success">{{successMsg}}</p>
-		{{/if}}
-        {{#if errorMsg}}
- 			<p class="msg-danger">{{errorMsg}}</p>
-		{{/if}}
+        <div id="sidemenu">
+            <div class="toggle-btn" onclick="toggleSidemenu()">
+                <a>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </a>
+            </div>
+            <ul>
+                <li> <a href="/">Home </a> </li>
+                {{#if data.authorised}}
+                    <li> <a href="sell">Sell </a> </li>
+                    <li> <a href="myItems">My Items </a> </li>
+                    <li> <a href="account">Account </a> </li>
+                    <li> <a href="logout">Logout </a> </li> 
+                {{else}}
+                    <li> <a href="login">Login </a></li> 
+                    <li> <a href="register">Sign Up </a></li> 
+		        {{/if}}
+                <li> <a href="about">About </a> </li> 
+                <li> <a href="contact">Contact </a></li>
+            </ul>
+        </div>
+    </head>
 
-  <p>{{message}}</p>
+<body id="body">
+    {{#if data.successMsg}}
+ 			<p class="msg-success">{{data.successMsg}}</p>
+		{{/if}}
+        {{#if data.errorMsg}}
+ 			<p class="msg-danger">{{data.errorMsg}}</p>
+		{{/if}}
   
 
     <h1>WebX Gallery</h1>
-    <p>This is a paragraph.</p>
-
-<nav class="side">
-    <a href="about">About</a> |
-    <a href="#services">Services</a> |
-    <a href="login">Login</a> |
-    <a href="register">Sign Up</a> |
-    <a href="#contact">Contact</a> |
-    <a href="myItems">My Items</a> |
-    <a href="sell">Sell</a> |
-    <a href="account">Account</a> |
-    <a href="logout">Logout</a> |
-</nav>
-<!--
-<div class="gallery">
-  <a target="_blank" href="min1.jpg">
-    <img src="min1.jpg" alt="Abstract Triangles" width="600" height="400">
-  </a>
-  <div class="desc">Abstract Art Geometric</div>
-</div>
-
-<div class="gallery">
-  <a target="_blank" href="min2.jpg">
-    <img src="min2.jpg" alt="Horizontal Navy" width="600" height="400">
-  </a>
-  <div class="desc">Horizontal Navy Minimalist Art</div>
-</div>
-
-<div class="gallery">
-  <a target="_blank" href="min3.jpg">
-    <img src="min3.jpg" alt="Mordern Geometric Art Print
-    by MAGIK MOMENTS" width="600" height="400">
-  </a>
-  <div class="desc">Mid Century Modern 13</div>
-</div>
--->
+    <p>Buy and sell art.</p>
 
   {{#each items}}
     <div class="gallery">
       <a href="/{{itemID}}">
-        <img src="{{imageDir}}" alt="No picture found" width="600" height="400">
+        <img src="{{imageDir1}}" alt="No picture found" width="600" height="400">
       </a>
       <div class="desc">Name: {{item}} Price: {{price}}</div>
     </div>

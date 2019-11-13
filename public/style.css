@@ -1,7 +1,7 @@
+/* IMPORTANT - Do not create another stylesheet, if you need to do something specific - use classes */
 
+/* ############################################# ALL PAGES ############################################# */
 div.gallery {
-  margin: 5px;
-  border: 1px solid #ccc;
   float: left;
   width: 180px;
 }
@@ -20,44 +20,140 @@ div.desc {
   text-align: center;
 }
 
-
-h1,h2 {
-  border-radius: 25px;
-  padding: 60px;
-  text-align: center;
-  background: white;
-  color: black;
-  font-size: 50px;
+.row {
+  display: flex;
 }
 
+.col {
+  flex: 50%;
+  padding: 10px;
+}
 
-/* Do not create another stylesheet, if you need to do something specific - use classes */
+body {
+  /*background-image: url("aboutbackground5.jpeg");*/
+  font-family: sans-serif;
+}
+
 footer {
   color: white;
   font-size: 20px;
 }
 
 h3 {
-  text-align: left;
+  text-align: center;
   color: black;
-  font-size: 20px;
+  font-size: 40px;
   text-decoration: underline;
 }
 
-/* Do not delete - for validation messages */
-.msg-success {
-  border: 1px solid green;
-  font-weight: bold;
-  color: green;
-  padding: 1em;
+h1,h2 {
+  padding: 90px;
+  margin-top: 70px;
+  margin: 0px;
+  text-align: center;
+  background: black;
+  color: white;
+  font-size: 50px;
 }
 
-.msg-danger {
-  border: 1px solid red;
-  font-weight: bold;
-  color: red;
-  padding: 1em;
+.small {
+  font-size: small; 
+  color: red
 }
+
+.center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.large-text {
+  font-size: xx-large;
+}
+
+img {
+  width: 30%;
+  height: auto;
+  align-items: center;
+  float: left;
+  margin-right: 10px;
+}
+
+/*Menu Customisation */
+#sidemenu{
+  position: fixed;
+  width: 200px;
+  height: 100%;
+  background: darkgrey;
+  transition: all 100ms linear;
+  left: -210px;
+  top: 0px;
+ }
+ /* The text within the menu */
+ #sidemenu ul li{
+  color: black;
+  padding:  20px;
+  padding-left: 0px;
+  border-bottom: 1px solid rgba(100,100,100,0.3);
+ }
+ /*  */
+ #sidemenu.active{
+  left: 0px;
+ }
+ /* Position of sidemenu Button */
+ #sidemenu .toggle-btn{
+  position: absolute;
+  left: 230px;
+  top: 10px;
+ }
+ /* The sidemenu button */
+ #sidemenu .toggle-btn span{
+  box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+  display: block;
+  width: 30px;
+  margin: 5px 0px;
+  height: 5px;
+  padding-left: 5px;
+  background: #4CAF50;
+  -webkit-transition-duration: 0.4s; /* Safari */
+  transition-duration: 0.4s;
+  cursor: pointer;
+ }
+
+  /* Hover links underline */
+ a:link {
+  text-decoration: none;
+  }
+  a:visited {
+  text-decoration: none;
+  }
+  a:hover {
+  text-decoration: underline;
+  }
+  a:active {
+  text-decoration: underline;
+  }
+
+   /* Validation message success */
+  .msg-success {
+    border: 1px solid green;
+    font-weight: bold;
+    color: green;
+    padding: 1em;
+  }
+  
+  /* Validation message error */
+  .msg-danger {
+    border: 1px solid red;
+    font-weight: bold;
+    color: red;
+    padding: 1em;
+  }
+  /* ############################################# END OF ALL PAGES ############################################# */
+
+
+
+
 
  /* ############################################# DETAIL PAGE ############################################# */
  .detail_title{
@@ -125,6 +221,12 @@ h3 {
   cursor: pointer;
   transition: background 0.3s;
 }
+#detail_description-buyitnow{
+  background: #00aeff;
+}
+#detail_description-buyitnow:hover{
+  background: #0084c2;
+}
 #detail_description-addtobasket{
   background: #00aeff;
 }
@@ -176,17 +278,5 @@ h3 {
   cursor: pointer;
   background: #00aeff;
 }
-/* Do not delete - for validation messages */
-.msg-success {
-  border: 1px solid green;
-  font-weight: bold;
-  color: green;
-  padding: 1em;
-}
 
-.msg-danger {
-  border: 1px solid red;
-  font-weight: bold;
-  color: red;
-  padding: 1em;
-}
+/* ############################################# END OF DETAIL PAGE ############################################# */

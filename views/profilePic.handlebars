@@ -1,11 +1,45 @@
 <!DOCTYPE html>
 <html>
-<head>
-<meta charset="UTF-8", name="viewport" content="width=device-width, initial-scale=1">
-<title>Account Settings</title><html>
-<link rel="stylesheet" type="text/css" href="style.css">
+    <head>
+        <meta charset="UTF-8", content="width=device-width, initial-scale=1">
+        <title>Profile Picture</title><html>
+        <link rel="stylesheet" type="text/css" href="style.css">
+        <script type="text/javascript">
+            function toggleSidemenu(){ 
+                document.getElementById("sidemenu").classList.toggle('active')
+                if (document.getElementById("sidemenu").classList == 'active')
+                    document.getElementById("body").style.marginLeft = "200px";
+                else
+                    document.getElementById("body").style.marginLeft = "5px";
+            }
+        </script>
 
-<body>
+        <div id="sidemenu">
+            <div class="toggle-btn" onclick="toggleSidemenu()">
+                <a>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </a>
+            </div>
+            <ul>
+                <li> <a href="/">Home </a> </li>
+                {{#if authorised}}
+                    <li> <a href="sell">Sell </a> </li>
+                    <li> <a href="myItems">My Items </a> </li>
+                    <li> <a href="account">Account </a> </li>
+                    <li> <a href="logout">Logout </a> </li> 
+                {{else}}
+                    <li> <a href="login">Login </a></li> 
+                    <li> <a href="register">Sign Up </a></li> 
+		        {{/if}}
+                <li> <a href="about">About </a> </li> 
+                <li> <a href="contact">Contact </a></li>
+            </ul>
+        </div>
+    </head>
+
+<body id="body">
     	{{#if successMsg}}
  			<p class="msg-success">{{successMsg}}</p>
 		{{/if}}
@@ -14,14 +48,6 @@
 		{{/if}}
 
     <section class="container">
-
-        <nav class="side">
-            <a href="about">About</a> |
-            <a href="#services">Services</a> |
-            <a href="login">Login</a> |
-            <a href="register">Sign Up</a> |
-            <a href="#contact">Contact</a> |
-        </nav>
 
         <h1>Upload profile picture</h1>
         <p>Current Profile Picture</p>

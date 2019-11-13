@@ -1,48 +1,73 @@
 <!DOCTYPE html>
 <html>
-<head>
-<meta charset="UTF-8", name="viewport" content="width=device-width, initial-scale=1">
-<title>My Items</title><html>
-<link rel="stylesheet" type="text/css" href="style.css">
+    <head>
+        <meta charset="UTF-8", content="width=device-width, initial-scale=1">
+        <title>My Items</title><html>
+        <link rel="stylesheet" type="text/css" href="style.css">
+        <script type="text/javascript">
+            function toggleSidemenu(){ 
+                document.getElementById("sidemenu").classList.toggle('active')
+                if (document.getElementById("sidemenu").classList == 'active')
+                    document.getElementById("body").style.marginLeft = "200px";
+                else
+                    document.getElementById("body").style.marginLeft = "5px";
+            }
+        </script>
 
-<body>
-    	{{#if successMsg}}
- 			<p class="msg-success">{{successMsg}}</p>
+        <div id="sidemenu">
+            <div class="toggle-btn" onclick="toggleSidemenu()">
+                <a>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </a>
+            </div>
+            <ul>
+                <li> <a href="/">Home </a> </li>
+                {{#if data.authorised}}
+                    <li> <a href="sell">Sell </a> </li>
+                    <li> <a href="myItems">My Items </a> </li>
+                    <li> <a href="account">Account </a> </li>
+                    <li> <a href="logout">Logout </a> </li> 
+                {{else}}
+                    <li> <a href="login">Login </a></li> 
+                    <li> <a href="register">Sign Up </a></li> 
+		        {{/if}}
+                <li> <a href="about">About </a> </li> 
+                <li> <a href="contact">Contact </a></li>
+            </ul>
+        </div>
+    </head>
+
+<body id="body">
+    	{{#if data.successMsg}}
+ 			<p class="msg-success">{{data.successMsg}}</p>
 		{{/if}}
-        {{#if errorMsg}}
- 			<p class="msg-danger">{{errorMsg}}</p>
+        {{#if data.errorMsg}}
+ 			<p class="msg-danger">{{data.errorMsg}}</p>
 		{{/if}}
 
     <section class="container">
 
-        <nav class="side">
-            <a href="about">About</a> |
-            <a href="#services">Services</a> |
-            <a href="login">Login</a> |
-            <a href="register">Sign Up</a> |
-            <a href="#contact">Contact</a> |
-        </nav>
-
         <h1>My Items</h1>
-        {{#each items}}
-			<li>{{item}}</li>
-            <li>{{price}}</li>
-            <li>          
-                <a target="_blank" href="{{imageDir1}}">
-                    <img src="{{imageDir1}}" alt="No item picture" width="600" height="400">
+          {{#each items}}
+            <div class="gallery">
+            <a href="/{{itemID}}">
+                <img src="{{imageDir1}}" alt="No picture found" width="600" height="400">
+            </a>
+            {{#if imageDir2}}
+                <a href="{{itemID}}">
+                    <img src="{{imageDir2}}" alt="No item picture" width="600" height="400">
                 </a>
-                {{#if imageDir2}}
- 			        <a target="_blank" href="{{imageDir2}}">
-                        <img src="{{imageDir2}}" alt="No item picture" width="600" height="400">
-                    </a>
-		        {{/if}}
-                {{#if imageDir3}}
- 			        <a target="_blank" href="{{imageDir3}}">
-                        <img src="{{imageDir3}}" alt="No item picture" width="600" height="400">
-                    </a>
-		        {{/if}}
-            </li>
-		{{/each}}
+            {{/if}}
+            {{#if imageDir3}}
+                <a href="{{itemID}}">
+                    <img src="{{imageDir3}}" alt="No item picture" width="600" height="400">
+                </a>
+            {{/if}}
+            <div class="desc">Name: {{item}} Price: {{price}} For Sale: {{status}}</div>
+            </div>
+        {{/each}}
     </section>
 </body>
 
