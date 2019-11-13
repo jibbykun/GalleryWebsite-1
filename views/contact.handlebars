@@ -1,8 +1,9 @@
-<!DOCTYPE html>
+<!doctype html>
+
 <html>
     <head>
         <meta charset="UTF-8", content="width=device-width, initial-scale=1">
-        <title>Login</title><html>
+        <title>Contact</title><html>
         <link rel="stylesheet" type="text/css" href="style.css">
         <script type="text/javascript">
             function toggleSidemenu(){ 
@@ -40,37 +41,14 @@
     </head>
 
 <body id="body">
-    	{{#if successMsg}}
- 			<p class="msg-success">{{successMsg}}</p>
-		{{/if}}
-        {{#if errorMsg}}
- 			<p class="msg-danger">{{errorMsg}}</p>
-		{{/if}}
 
-    <section class="container">
 
-        <h1>Login Page</h1>
-        <hr>
-        <form action="/login" method="POST">
-            <div>
-                <label for="username"><b>Username</b></label>
-                <input type="text" placeholder="Enter Username" name="username" required>
-            </div>
-            
-            <div>
-                <label for="password"><b>Password</b></label>
-                <input type="password" placeholder="Enter Password" name="password" required>
-            </div>
 
-            <p><input type="submit" value="Login"></p>
-        </form>
-        <p>If you don't have an account, <a href="/register">Register Here</a></p>
-    </section>
+    <h1>Contact</h1>
+    <h3>About the WebX Team</h3>
+
+    
 </body>
 
-<footer> 
-    <br>
-    <br>
-    <a href="/">Click here to go Home</a>
-</footer>
+
 </html>

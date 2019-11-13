@@ -1,53 +1,83 @@
 <!DOCTYPE html>
 <html>
-<head>
-<meta charset="UTF-8", name="viewport" content="width=device-width, initial-scale=1">
-<title>Item Details</title><html>
-<link rel="stylesheet" type="text/css" href="style.css">
+    <head>
+        <meta charset="UTF-8", content="width=device-width, initial-scale=1">
+        <title>Item Details</title><html>
+        <link rel="stylesheet" type="text/css" href="style.css">
+        <script type="text/javascript">
+            function toggleSidemenu(){ 
+                document.getElementById("sidemenu").classList.toggle('active')
+                if (document.getElementById("sidemenu").classList == 'active')
+                    document.getElementById("body").style.marginLeft = "200px";
+                else
+                    document.getElementById("body").style.marginLeft = "5px";
+            }
+        </script>
 
-<body>
+        <div id="sidemenu">
+            <div class="toggle-btn" onclick="toggleSidemenu()">
+                <a>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </a>
+            </div>
+            <ul>
+                <li> <a href="/">Home </a> </li>
+                {{#if authorised}}
+                    <li> <a href="sell">Sell </a> </li>
+                    <li> <a href="myItems">My Items </a> </li>
+                    <li> <a href="account">Account </a> </li>
+                    <li> <a href="logout">Logout </a> </li> 
+                {{else}}
+                    <li> <a href="login">Login </a></li> 
+                    <li> <a href="register">Sign Up </a></li> 
+		        {{/if}}
+                <li> <a href="about">About </a> </li> 
+                <li> <a href="contact">Contact </a></li>
+            </ul>
+        </div>
+    </head>
+
+<body id="body">
     	{{#if successMsg}}
  			<p class="msg-success">{{successMsg}}</p>
 		{{/if}}
         {{#if errorMsg}}
  			<p class="msg-danger">{{errorMsg}}</p>
 		{{/if}}
-
+    <h1>{{item}}</h1>
     <section class="container">
-
-        <nav class="side">
-            <a href="about">About</a> |
-            <a href="#services">Services</a> |
-            <a href="login">Login</a> |
-            <a href="register">Sign Up</a> |
-            <a href="#contact">Contact</a> |
-        </nav>
 
         <div class="detail_top">
             <div class="detail_image_previews">
 
             </div>
-            <div class="detail_image_main">
-                <img id="detail_image_main-id" src="{{imageDir1}}" alt="No picture found"/>
-            </div>
-                <div class="detail_description">
-                <h3>{{name}} ({{year}})</h3>
-                <p>{{sDescription}}</p>
-                <p>Price: {{price}}</p>
-                <p>Artist: {{artist}}</p>
-                <p>Medium: {{medium}}</p>
-                <p>Size: {{size}}</p>
-                <p>Reference: #{{itemID}}</p>
-                <button id="detail_description-addtobasket">Add to basket</button>
-                <button id="detail_description-favourite">Favourite</button>
+            <div class="row">
+                <div class="col detail_image_main">
+                    <img id="detail_image_main-id" src="{{imageDir1}}" alt="No picture found"/>
+                </div>
+                <div class="col detail_description">
+                    <h3>{{name}} {{year}}</h3>
+                    <p>{{sDescription}}</p>
+                    <p>Price: {{price}}</p>
+                    <p>Artist: {{artist}}</p>
+                    <p>Medium: {{medium}}</p>
+                    <p>Size: {{size}}</p>
+                    <p>Reference: #{{itemID}}</p>
+                    <a href="/buy/{{itemID}}"><button id="detail_description-buyitnow">Buy it Now</button></a>
+                    <button id="detail_description-addtobasket">Add to basket</button>
+                    <button id="detail_description-favourite">Favourite</button>
+                </div>
             </div>
         </div>
-        <div class="detail_bottom">
-            <div class="detail_more_description">
+
+        <div class="row detail_bottom">
+            <div class="col detail_more_description">
                 <h3>Description</h3>
                 <p>{{lDescription}}</p>
             </div>
-            <div class="detail_seller">
+            <div class="col detail_seller">
                 <h3>Seller Details</h3>
                 <p>Username: {{username}}</p>
                 <p>Current Profile Picture</p>
