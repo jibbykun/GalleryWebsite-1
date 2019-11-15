@@ -15,79 +15,42 @@
                     document.getElementById("body").style.marginLeft = "5px";
             }
         </script>
-
-        <div id="sidemenu">
-            <div class="toggle-btn" onclick="toggleSidemenu()">
-                <a>
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </a>
-            </div>
-            <ul>
-                <li> <a href="/">Home </a> </li>
-                {{#if authorised}}
-                    <li> <a href="sell">Sell </a> </li>
-                    <li> <a href="myItems">My Items </a> </li>
-                    <li> <a href="account">Account </a> </li>
-                    <li> <a href="logout">Logout </a> </li> 
-                {{else}}
-                    <li> <a href="login">Login </a></li> 
-                    <li> <a href="register">Sign Up </a></li> 
-		        {{/if}}
-                <li> <a href="about">About </a> </li> 
-                <li> <a href="contact">Contact </a></li>
-            </ul>
-        </div>
     </head>
 
 <body id="body">
-
-
-=======
-    <meta charset="UTF-8", content="width=device-width, initial-scale=1">
-    <title>About</title><html>
-    <link rel="stylesheet" type="text/css" href="style.css">
-    <script type="text/javascript">
-    function toggleSidemenu(){ document.getElementById("sidemenu").classList.toggle('active');}
-    </script>
-    <style>
-    a:link {
-    text-decoration: none;
-    }
-    a:visited {
-    text-decoration: none;
-    }
-    a:hover {
-    text-decoration: underline;
-    }
-    a:active {
-    text-decoration: underline;
-    }
-    </style>
-</head>
-
-<body>
-
-    <div id="sidemenu">
-    <div class="toggle-btn" onclick="toggleSidemenu()"><a>
-        <span></span>
-        <span></span>
-        <span></span>
-    </a>
-    </div>
-    <ul>
-        <li> <a href="Home">Home </a> </li>
-        <li> <a href="about">About </a> </li> 
-        <li> <a href="services">Services </a> </li> 
-        <li> <a href="login">Login </a></li> 
-        <li> <a href="register">Sign Up </a></li>
-        <li> <a href="Sell">Sell </a> </li> 
-        <li> <a href="contact">Contact </a></li>
-    </ul>
-    </div>
-
-
+    	{{#if successMsg}}
+ 			<p class="msg-success">{{successMsg}}</p>
+		{{/if}}
+        {{#if errorMsg}}
+ 			<p class="msg-danger">{{errorMsg}}</p>
+		{{/if}}
+    <section class="container">
+        <div class="header">
+            <a href="/" class="header_logo center"><button><img src="WebxLogo.png"/></button></a>
+            <div id="sidemenu">
+                <div class="toggle-btn" onclick="toggleSidemenu()">
+                    <a>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </a>
+                </div>
+                <ul>
+                    <li> <a href="/">Home </a> </li>
+                    {{#if authorised}}
+                        <li> <a href="sell">Sell </a> </li>
+                        <li> <a href="myItems">My Items </a> </li>
+                        <li> <a href="account">Account </a> </li>
+                        <li> <a href="logout">Logout </a> </li> 
+                    {{else}}
+                        <li> <a href="login">Login </a></li> 
+                        <li> <a href="register">Sign Up </a></li> 
+                    {{/if}}
+                    <li> <a href="about">About </a> </li> 
+                    <li> <a href="contact">Contact </a></li>
+                </ul>
+            </div>
+        </div>
     <h1 class="aboutheader">About</h1>
     <h3 class="aboutheader3">Information about the gallery</h3>
 
