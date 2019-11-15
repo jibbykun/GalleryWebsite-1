@@ -279,7 +279,7 @@ router.post('/uploadItem', koaBody, async ctx => {
 		console.log(record)
 
 		// insert the item into the db including the userID
-		await db.run(`INSERT INTO items(item, price, imageDir1, imageDir2, imageDir3, userID, status) VALUES("${body.item}", "${body.price}", "${dbDir[0]}", "${dbDir[1]}", "${dbDir[2]}", "${record.userID}", true)`)
+		await db.run(`INSERT INTO items(item, year, price, artist, medium, size, sDescription, lDescription, imageDir1, imageDir2, imageDir3, userID, status) VALUES("${body.item}", "${body.year}", "${body.price}", "${body.artist}", "${body.medium}", "${body.size}", "${body.sDescription}", "${body.lDescription}", "${dbDir[0]}", "${dbDir[1]}", "${dbDir[2]}", "${record.userID}", true)`)
 		await db.close()
 
 		// redirect to my items page
