@@ -31,3 +31,7 @@ todo.db
 
 #Database files
 *.db
+
+#Images
+*.png
+*.jpg
