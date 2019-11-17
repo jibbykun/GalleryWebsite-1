@@ -18,8 +18,8 @@ div.gallery img {
 div.desc {
   padding: 15px;
   text-align: center;
+  
 }
-
 .row {
   display: flex;
 }
@@ -151,7 +151,7 @@ h1 {
     color: red;
     padding: 1em;
   }
-  /* ############################################# END OF ALL PAGES ############################################# */
+/* ############################################# END OF ALL PAGES ############################################# */
 
 
 
@@ -202,7 +202,7 @@ h1 {
 .detail_image_main img{
   height: 400px;
   width: auto;
-  object-fit: cover;
+  object-fit: contain;
   padding: 50px 0 50px 0;
   display: block;
   margin: 0 auto;
@@ -301,8 +301,7 @@ h1 {
   padding: 1em;
 }
 
-
-/* ************************************************************************************************************************************************************ */
+/* ############################################# MENU ############################################# */
 
   /*Menu Customisation */
   #sidemenu{
@@ -383,3 +382,25 @@ h1 {
     font-size: 50px;
   }
 
+/* ############################################# END OF MENU ############################################# */
+
+
+
+
+
+ /* ############################################# SELL PAGE ############################################# */
+
+.sell_form{
+  width: auto;
+  text-align: center;
+}
+.sell_form input[type=text], .sell_form textarea {
+  width: 400px;
+  min-height: 30px;
+}
+#sell_form-sDescription{
+  height: 100px;
+}
+#sell_form-lDescription{
+  height: 200px;
+}
