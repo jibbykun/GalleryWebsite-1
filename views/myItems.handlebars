@@ -51,31 +51,27 @@
         </div>
 
 
-        <h1>My Items</h1>
-          {{#each items}}
-            <div class="gallery">
-            <a href="/{{itemID}}">
-                <img src="{{imageDir1}}" alt="No picture found" width="600" height="400">
-            </a>
-            {{#if imageDir2}}
-                <a href="{{itemID}}">
-                    <img src="{{imageDir2}}" alt="No item picture" width="600" height="400">
+    <h1>My Items</h1>
+    <div class="gallery">
+        {{#each items}}
+            <div class="gallery-item">
+                <a href="/{{itemID}}">
+                    <img src="{{imageDir1}}" alt="No picture found" width="600" height="400">
+                    {{#if imageDir2}}
+                        <img src="{{imageDir2}}" alt="No item picture" width="600" height="400">
+                    {{/if}}
+                    {{#if imageDir3}}
+                        <img src="{{imageDir3}}" alt="No item picture" width="600" height="400">
+                    {{/if}}
                 </a>
-            {{/if}}
-            {{#if imageDir3}}
-                <a href="{{itemID}}">
-                    <img src="{{imageDir3}}" alt="No item picture" width="600" height="400">
-                </a>
-            {{/if}}
-            <div class="desc">Name: {{item}} Price: {{price}} For Sale: {{status}}</div>
-            </div>
+                <div class="gallery-item-description"><h3>{{item}}</h3> <p>{{price}}</p></div>
+                </div>
         {{/each}}
+    </div>
     </section>
 </body>
 
 <footer> 
-    <br>
-    <br>
-    <a href="http://localhost:8080">Click here to go Home</a>
+
 </footer>
 </html>

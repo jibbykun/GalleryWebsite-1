@@ -52,30 +52,28 @@
         <div class="detail_top">
             <h1>{{item}} ({{year}})</h1>
             <div class="detail_image_previews"></div>
-            <div class="row">
-                <div class="col detail_image_main">
-                    <img id="detail_image_main-id" src="{{imageDir1}}" alt="No picture found"/>
-                </div>
-                <div class="col detail_description">
-                    <p>{{sDescription}}</p>
-                    <p>Price: {{price}}</p>
-                    <p>Artist: {{artist}}</p>
-                    <p>Medium: {{medium}}</p>
-                    <p>Size: {{size}}</p>
-                    <p>Reference: #{{itemID}}</p>
-                    <a href="/buy/{{itemID}}"><button id="detail_description-buyitnow"><h3>Buy it Now</h3></button></a>
-                    <button id="detail_description-addtobasket"><h3>Add to basket</h3></button>
-                    <button id="detail_description-favourite"><h3>Favourite</h3></button>
-                </div>
+            <div class="detail_image_main">
+                <img id="detail_image_main-id" src="{{imageDir1}}" alt="No picture found"/>
+            </div>
+            <div class="detail_description">
+                <p>{{sDescription}}</p>
+                <p>Price: {{price}}</p>
+                <p>Artist: {{artist}}</p>
+                <p>Medium: {{medium}}</p>
+                <p>Size: {{size}}</p>
+                <p>Reference: #{{itemID}}</p>
+                <a href="/buy/{{itemID}}"><button id="detail_description-buyitnow"><h3>Buy it Now</h3></button></a>
+                <button id="detail_description-addtobasket"><h3>Add to basket</h3></button>
+                <button id="detail_description-favourite"><h3>Favourite</h3></button>
             </div>
         </div>
 
-        <div class="row detail_bottom">
-            <div class="col detail_more_description">
+        <div class="detail_bottom">
+            <div class="detail_more_description">
                 <h3>Description</h3>
                 <p>{{lDescription}}</p>
             </div>
-            <div class="col detail_seller">
+            <div class="detail_seller">
                 <h3>Seller Details</h3>
                 <p>Username: {{username}}</p>
                 <p>Current Profile Picture</p>
