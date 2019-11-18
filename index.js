@@ -103,8 +103,8 @@ router.post('/register', async ctx => {
 		// encrypt the password
 		body.password = await bcrypt.hash(body.password, saltRounds)
 		// insert the user into the db - success!
-		const sql = `INSERT INTO users(username, password, profilePicture, paypalUsername) 
-			VALUES("${body.username}", "${body.password}", "pic_${body.username}", "${body.paypalUsername}");`
+		const sql = `INSERT INTO users(username, password, profilePicture, paypalUsername, emailAddress) 
+			VALUES("${body.username}", "${body.password}", "pic_${body.username}", "${body.paypalUsername}", "${body.emailAddress}");`
 		console.log(sql)
 		await db.run(sql)
 		await db.close()
@@ -379,7 +379,7 @@ router.get('/buy/:id', async ctx => {
 module.exports = app.listen(port, async() => {
 	// create the db if it doesnt exist - for users running first time
 	const db = await Database.open(dbName)
-	await db.run('CREATE TABLE IF NOT EXISTS users (userID INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, password TEXT, profilePicture TEXT, paypalUsername TEXT);')
+	await db.run('CREATE TABLE IF NOT EXISTS users (userID INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, password TEXT, profilePicture TEXT, paypalUsername TEXT, emailAddress TEXT);')
 	await db.run('CREATE TABLE IF NOT EXISTS items (itemID INTEGER PRIMARY KEY AUTOINCREMENT, userID INTEGER, item TEXT, year INTEGER, price TEXT, artist TEXT, medium TEXT, size TEXT, sDescription TEXT, lDescription TEXT, imageDir1 TEXT, imageDir2 TEXT, imageDir3 TEXT, status BOOLEAN);')
 	await db.close()
 	console.log(`listening on port ${port}`)
