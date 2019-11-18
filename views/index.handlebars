@@ -13,52 +13,53 @@
                     document.getElementById("body").style.marginLeft = "5px";
             }
         </script>
-
-        <div id="sidemenu">
-            <div class="toggle-btn" onclick="toggleSidemenu()">
-                <a>
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </a>
-            </div>
-            <ul>
-                <li> <a href="/">Home </a> </li>
-                {{#if data.authorised}}
-                    <li> <a href="sell">Sell </a> </li>
-                    <li> <a href="myItems">My Items </a> </li>
-                    <li> <a href="account">Account </a> </li>
-                    <li> <a href="logout">Logout </a> </li> 
-                {{else}}
-                    <li> <a href="login">Login </a></li> 
-                    <li> <a href="register">Sign Up </a></li> 
-		        {{/if}}
-                <li> <a href="about">About </a> </li> 
-                <li> <a href="contact">Contact </a></li>
-            </ul>
-        </div>
     </head>
 
 <body id="body">
-    {{#if data.successMsg}}
- 			<p class="msg-success">{{data.successMsg}}</p>
+    	{{#if successMsg}}
+ 			<p class="msg-success">{{successMsg}}</p>
 		{{/if}}
-        {{#if data.errorMsg}}
- 			<p class="msg-danger">{{data.errorMsg}}</p>
+        {{#if errorMsg}}
+ 			<p class="msg-danger">{{errorMsg}}</p>
 		{{/if}}
-  
-
-    <h1>WebX Gallery</h1>
-    <p>Buy and sell art.</p>
-
-  {{#each items}}
+    <section class="container">
+        <div class="header">
+            <a href="/" class="header_logo center"><button><img src="WebxLogo.png"/></button></a>
+            <div id="sidemenu">
+                <div class="toggle-btn" onclick="toggleSidemenu()">
+                    <a>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </a>
+                </div>
+                <ul>
+                    <li> <a href="/">Home </a> </li>
+                    {{#if data.authorised}}
+                        <li> <a href="sell">Sell </a> </li>
+                        <li> <a href="myItems">My Items </a> </li>
+                        <li> <a href="account">Account </a> </li>
+                        <li> <a href="logout">Logout </a> </li> 
+                    {{else}}
+                        <li> <a href="login">Login </a></li> 
+                        <li> <a href="register">Sign Up </a></li> 
+                    {{/if}}
+                    <li> <a href="about">About </a> </li> 
+                    <li> <a href="contact">Contact </a></li>
+                </ul>
+            </div>
+        </div>
     <div class="gallery">
-      <a href="/{{itemID}}">
-        <img src="{{imageDir1}}" alt="No picture found" width="600" height="400">
-      </a>
-      <div class="desc">Name: {{item}} Price: {{price}}</div>
+        {{#each items}}
+            <div class="gallery-item">
+                <a href="/{{itemID}}">
+                    <img src="{{imageDir1}}" alt="No picture found" width="600" height="400">
+                    <div class="gallery-item-description"><h3>{{item}}</h3> <p>{{price}}</p></div>
+                </a>
+            </div>
+        {{/each}}
     </div>
-  {{/each}}
+
 </body>
 
 <footer> 

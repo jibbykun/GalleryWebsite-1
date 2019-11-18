@@ -13,31 +13,8 @@
                     document.getElementById("body").style.marginLeft = "5px";
             }
         </script>
-
-        <div id="sidemenu">
-            <div class="toggle-btn" onclick="toggleSidemenu()">
-                <a>
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </a>
-            </div>
-            <ul>
-                <li> <a href="/">Home </a> </li>
-                {{#if authorised}}
-                    <li> <a href="sell">Sell </a> </li>
-                    <li> <a href="myItems">My Items </a> </li>
-                    <li> <a href="account">Account </a> </li>
-                    <li> <a href="logout">Logout </a> </li> 
-                {{else}}
-                    <li> <a href="login">Login </a></li> 
-                    <li> <a href="register">Sign Up </a></li> 
-		        {{/if}}
-                <li> <a href="about">About </a> </li> 
-                <li> <a href="contact">Contact </a></li>
-            </ul>
-        </div>
     </head>
+
 <body id="body">
     	{{#if successMsg}}
  			<p class="msg-success">{{successMsg}}</p>
@@ -45,8 +22,34 @@
         {{#if errorMsg}}
  			<p class="msg-danger">{{errorMsg}}</p>
 		{{/if}}
-
     <section class="container">
+        <div class="header">
+            <a href="/" class="header_logo center"><button><img src="WebxLogo.png"/></button></a>
+            <div id="sidemenu">
+                <div class="toggle-btn" onclick="toggleSidemenu()">
+                    <a>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </a>
+                </div>
+                <ul>
+                    <li> <a href="/">Home </a> </li>
+                    {{#if authorised}}
+                        <li> <a href="sell">Sell </a> </li>
+                        <li> <a href="myItems">My Items </a> </li>
+                        <li> <a href="account">Account </a> </li>
+                        <li> <a href="logout">Logout </a> </li> 
+                    {{else}}
+                        <li> <a href="login">Login </a></li> 
+                        <li> <a href="register">Sign Up </a></li> 
+                    {{/if}}
+                    <li> <a href="about">About </a> </li> 
+                    <li> <a href="contact">Contact </a></li>
+                </ul>
+            </div>
+        </div>
+
 
         <h1>Sign Up</h1>
         <p>Please fill in this form to create an account.</p>
@@ -55,6 +58,11 @@
             <div>
                 <label for="username"><b>Username</b></label>
                 <input type="text" placeholder="Enter Username" name="username" required>
+            </div>
+
+            <div>
+                <label for="username"><b>Email Address</b></label>
+                <input type="text" placeholder="Enter Email Address" name="emailAddress" required>
             </div>
 
             <div>

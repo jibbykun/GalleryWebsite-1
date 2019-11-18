@@ -103,8 +103,8 @@ router.post('/register', async ctx => {
 		// encrypt the password
 		body.password = await bcrypt.hash(body.password, saltRounds)
 		// insert the user into the db - success!
-		const sql = `INSERT INTO users(username, password, profilePicture, paypalUsername) 
-			VALUES("${body.username}", "${body.password}", "pic_${body.username}", "${body.paypalUsername}");`
+		const sql = `INSERT INTO users(username, password, profilePicture, paypalUsername, emailAddress) 
+			VALUES("${body.username}", "${body.password}", "pic_${body.username}", "${body.paypalUsername}", "${body.emailAddress}");`
 		console.log(sql)
 		await db.run(sql)
 		await db.close()
@@ -279,7 +279,7 @@ router.post('/uploadItem', koaBody, async ctx => {
 		console.log(record)
 
 		// insert the item into the db including the userID
-		await db.run(`INSERT INTO items(item, price, imageDir1, imageDir2, imageDir3, userID, status) VALUES("${body.item}", "${body.price}", "${dbDir[0]}", "${dbDir[1]}", "${dbDir[2]}", "${record.userID}", true)`)
+		await db.run(`INSERT INTO items(item, year, price, artist, medium, size, sDescription, lDescription, imageDir1, imageDir2, imageDir3, userID, status) VALUES("${body.item}", "${body.year}", "${body.price}", "${body.artist}", "${body.medium}", "${body.size}", "${body.sDescription}", "${body.lDescription}", "${dbDir[0]}", "${dbDir[1]}", "${dbDir[2]}", "${record.userID}", true)`)
 		await db.close()
 
 		// redirect to my items page
@@ -379,7 +379,7 @@ router.get('/buy/:id', async ctx => {
 module.exports = app.listen(port, async() => {
 	// create the db if it doesnt exist - for users running first time
 	const db = await Database.open(dbName)
-	await db.run('CREATE TABLE IF NOT EXISTS users (userID INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, password TEXT, profilePicture TEXT, paypalUsername TEXT);')
+	await db.run('CREATE TABLE IF NOT EXISTS users (userID INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, password TEXT, profilePicture TEXT, paypalUsername TEXT, emailAddress TEXT);')
 	await db.run('CREATE TABLE IF NOT EXISTS items (itemID INTEGER PRIMARY KEY AUTOINCREMENT, userID INTEGER, item TEXT, year INTEGER, price TEXT, artist TEXT, medium TEXT, size TEXT, sDescription TEXT, lDescription TEXT, imageDir1 TEXT, imageDir2 TEXT, imageDir3 TEXT, status BOOLEAN);')
 	await db.close()
 	console.log(`listening on port ${port}`)

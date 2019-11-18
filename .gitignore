@@ -28,3 +28,10 @@ website.db
 
 messages.txt
 todo.db
+
+#Database files
+*.db
+
+#Images
+*.png
+*.jpg
