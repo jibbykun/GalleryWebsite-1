@@ -2,8 +2,8 @@
 <html>
     <head>
         <meta charset="UTF-8", content="width=device-width, initial-scale=1">
-        <title>Home</title><html>
-        <link rel="stylesheet" type="text/css" href="style.css">
+        <title>Contact Seller</title><html>
+        <link rel="stylesheet" type="text/css" href="../style.css">
         <script type="text/javascript">
             function toggleSidemenu(){ 
                 document.getElementById("sidemenu").classList.toggle('active')
@@ -24,7 +24,7 @@
 		{{/if}}
     <section class="container">
         <div class="header">
-            <a href="/" class="header_logo center"><button><img src="WebxLogo.png"/></button></a>
+            <a href="/" class="header_logo center"><button><img src="../WebxLogo.png"/></button></a>
             <div id="sidemenu">
                 <div class="toggle-btn" onclick="toggleSidemenu()">
                     <a>
@@ -50,15 +50,20 @@
             </div>
         </div>
     <div class="gallery">
-        {{#each items}}
             <div class="gallery-item">
-                <a href="/{{itemID}}">
-                    <img src="{{imageDir1}}" alt="No picture found" width="600" height="400">
-                    <div class="gallery-item-description"><h3>{{item}}</h3> <p>{{price}}</p></div>
+                <a href="/{{item.itemID}}">
+                    <img src="../{{item.imageDir1}}" alt="No picture found" width="600" height="400">
+                    <div class="gallery-item-description"><h3>{{item.item}}</h3> <p>{{item.price}}</p></div>
                 </a>
             </div>
-        {{/each}}
     </div>
+
+    <form action="/email" method="post">
+        <input type="text" name="itemID" hidden value="{{item.itemID}}">
+        <p>Send a message to <b>{{seller.username}}</b></p>
+        <p><textarea rows="10" cols="150" name="message" required></textarea></p>
+        <p><input type="submit" value="Send"></p>
+    </form>
 
 </body>
 
