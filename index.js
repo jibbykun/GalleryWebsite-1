@@ -12,6 +12,7 @@ const views = require('koa-views')
 const koaBody = require('koa-body')({multipart: true, uploadDir: '.'})
 const fs = require('fs-extra')
 const mime = require('mime-types')
+const nodemailer = require('nodemailer');
 
 const app = new Koa()
 const router = new Router()
@@ -375,6 +376,93 @@ router.get('/buy/:id', async ctx => {
 		}
 
 })
+
+router.get('/contactSeller/:id', async ctx => {
+	try {
+		// Check if the user is logged in - or send them back to the login page
+		console.log(ctx.session.authorised)
+		if(ctx.session.authorised !== true) 
+			return ctx.redirect('/login?errorMsg=you are not logged in')
+		const db = await Database.open(dbName)
+		console.log(`item id: ${ctx.params.id}`)
+		const data = {}
+		const record = await db.get(`SELECT * FROM items WHERE itemID = ${ctx.params.id};`)
+		// check if the item exists
+		if(record === undefined) throw new Error('unrecogised item')
+		const itemUser = await db.get(`SELECT * FROM users WHERE userID = ${record.userID};`)
+		// set the data - item info + user info
+
+
+		if(ctx.query.errorMsg) data.errorMsg = ctx.query.errorMsg
+		if(ctx.query.successMsg) data.successMsg = ctx.query.successMsg
+		data.authorised = ctx.session.authorised
+		await ctx.render('contactSeller', {item: record, seller: itemUser, data: data})
+	} catch(err) {
+		console.error(err.message)
+		await ctx.render('error', {message: err.message})
+	}
+})
+
+router.post('/email', async ctx => {
+	if(ctx.session.authorised !== true) 
+		return ctx.redirect('/login?errorMsg=you are not logged in')
+		try {
+			const body = ctx.request.body
+			const db = await Database.open(dbName)
+			const itemRecord = await db.get(`SELECT * FROM items WHERE itemID = ${body.itemID};`)
+			const sellerRecord = await db.get(`SELECT * FROM users WHERE userID = "${itemRecord.userID}";`)
+			const userRecord = await db.get(`SELECT * FROM users WHERE username = "${ctx.session.user}";`)
+			await db.close()
+	
+			const output = `
+			<p>Hi ${sellerRecord.username},</p>
+			<p>You have a new question about an item you are selling: ${itemRecord.item}</p>
+			<p>${userRecord.username} asks:</p>
+			<p>${body.message}</p>
+			<p>Thank you.</p>
+		  `;
+	
+		var transporter = nodemailer.createTransport({
+			host: "smtp-mail.outlook.com", // hostname
+			secureConnection: false, // TLS requires secureConnection to be false
+			port: 587, // port for secure SMTP
+			tls: {
+			   ciphers:'SSLv3'
+			},
+			auth: {
+				user: 'hooglywooglyboogly6969@outlook.com', // dont steal my acc!!!
+				pass: 'Supertester123'  // stop looking!!!
+			}
+		});
+		
+		  // setup email data with unicode symbols
+		  let mailOptions = {
+			  from: '"WebX Team" <hooglywooglyboogly6969@outlook.com>', // sender address
+			  to: `${sellerRecord.emailAddress}`, // list of receivers
+			  subject: 'New message about an item', // Subject line
+			  text: 'Hello world?', // plain text body
+			  html: output // html body
+		  };
+		
+		  // send mail with defined transport object
+		  transporter.sendMail(mailOptions, (error, info) => {
+			  if (error) {
+				  return console.log(error);
+			  }
+			  console.log('Message sent: %s', info.messageId);   
+			  console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
+			  
+		  });
+
+		  return ctx.redirect(`/${body.itemID}?successMsg=Message Sent...`);
+	
+		} catch(err) {
+			console.log(err.message)
+			await ctx.render('error', {message: err.message})
+		}
+})
+
+
 
 module.exports = app.listen(port, async() => {
 	// create the db if it doesnt exist - for users running first time
