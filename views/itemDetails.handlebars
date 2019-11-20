@@ -53,7 +53,7 @@
             <h1>{{item}} ({{year}})</h1>
             <div class="detail_image_previews"></div>
             <div class="detail_image_main">
-                <img id="detail_image_main-id" src="{{imageDir1}}" alt="No picture found"/>
+                <a id="detail_image_main-a" href="{{imageDir1}}"><img id="detail_image_main-id" src="{{imageDir1}}" alt="No picture found"/></a>
             </div>
             <div class="detail_description">
                 <p>{{sDescription}}</p>
@@ -91,11 +91,13 @@
 
 </footer>
 <script>
-    const mainPic = document.getElementsByClassName("detail_image_main")[0].children[0]
+    const mainPic = document.getElementById("detail_image_main-id")
+    const mainPicLink = document.getElementById("detail_image_main-a")
     const previewPicParent = document.getElementsByClassName("detail_image_previews")[0]
     const previewPics = previewPicParent.children
     const previews = ["{{imageDir1}}", "{{imageDir2}}", "{{imageDir3}}", "{{imageDir4}}", "{{imageDir5}}"]
 
+    //Load preview images
     for(let i = 0; i < previews.length; i++){
         if(previews !== undefined){
             let newPreviewPic = document.createElement("img");
@@ -107,15 +109,17 @@
         }
     }
 
+    //Click on preview image to update main image
     for(let i = 0; i < previews.length; i++){
         previewPics[i].addEventListener('click', e => {
             mainPic.src = previews[i]
+            mainPicLink.href = mainPic.src
             for(let j = 0; j < previews.length; j++){
-                previewPics[j].classList.add("inactive");
+                previewPics[j].classList.add("inactive")
             }
-            previewPics[i].classList.remove("inactive");
-        });
+            previewPics[i].classList.remove("inactive")
+        })
     }
-
+    //Open high res image
 </script>
 </html>

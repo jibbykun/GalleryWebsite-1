@@ -12,6 +12,7 @@ const views = require('koa-views')
 const koaBody = require('koa-body')({multipart: true, uploadDir: '.'})
 const fs = require('fs-extra')
 const mime = require('mime-types')
+const watermark = require('image-watermark');
 
 const app = new Koa()
 const router = new Router()
@@ -64,6 +65,11 @@ router.get('/contact', async ctx =>{
 	const data = {}
 	data.authorised = ctx.session.authorised
 	await ctx.render('contact', data)
+})
+router.get('/payment', async ctx =>{ 
+	const data = {}
+	data.authorised = ctx.session.authorised
+	await ctx.render('payment', data)
 })
 
 router.get('/register', async ctx => {
@@ -265,6 +271,7 @@ router.post('/uploadItem', koaBody, async ctx => {
 			var time = new Date();
 			const dir = ctx.session.user + time.getFullYear().toString() + time.getMonth().toString() + time.getDay().toString() + time.getTime().toString() + i
 			const fileDir = 'public/Items/item_' + dir + '.png'
+			
 			console.log(fileDir)
 			await fs.copy(path, fileDir)
 			
@@ -384,3 +391,15 @@ module.exports = app.listen(port, async() => {
 	await db.close()
 	console.log(`listening on port ${port}`)
 })
+
+
+/*
+			var options = {
+				'text' : 'sample watermark', 
+				'resize' : '100%',
+				'override-image' : true
+			};
+			watermark.embedWatermark('public/Items/item_aaa201910115740942361890.png', options);
+
+
+*/
