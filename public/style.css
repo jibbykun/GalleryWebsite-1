@@ -39,6 +39,35 @@ a, a:visited, a:active, a:hover{
   height: auto;
 }
 
+.profilepicture {
+  position: relative;
+  left: 80px;
+  overflow: hidden;
+  width: 600px;
+  height: 600px;
+  border-radius: 50%;
+}
+
+.profilepictureframe {
+  border: 2px solid black;
+  width: 800px;
+  position: relative;
+  right: 20px;
+  padding: 20px;
+  float: right;
+}
+
+.accountleftframe {
+  border: 2px solid black;
+  width: 800px;
+  height: 835px;
+  position: relative;
+  left: 20px;
+  padding: 20px;
+  padding-top: 10px;
+}
+
+
 .gallery-item-description {
   overflow:hidden; 
   white-space:nowrap; 
@@ -85,9 +114,12 @@ body {
 .header_logo:hover{
   opacity: 0.7;
 }
+
 footer {
   color: white;
   font-size: 20px;
+  padding-left: 20px; 
+  padding-bottom: 20px;
 }
 
 h1 {
