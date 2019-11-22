@@ -12,6 +12,8 @@ const views = require('koa-views')
 const koaBody = require('koa-body')({multipart: true, uploadDir: '.'})
 const fs = require('fs-extra')
 const mime = require('mime-types')
+const watermark = require('image-watermark');
+const nodemailer = require('nodemailer');
 
 const app = new Koa()
 const router = new Router()
@@ -65,6 +67,11 @@ router.get('/contact', async ctx =>{
 	data.authorised = ctx.session.authorised
 	await ctx.render('contact', data)
 })
+router.get('/payment', async ctx =>{ 
+	const data = {}
+	data.authorised = ctx.session.authorised
+	await ctx.render('payment', data)
+})
 
 router.get('/register', async ctx => {
 	if(ctx.session.authorised == true) 
@@ -103,8 +110,8 @@ router.post('/register', async ctx => {
 		// encrypt the password
 		body.password = await bcrypt.hash(body.password, saltRounds)
 		// insert the user into the db - success!
-		const sql = `INSERT INTO users(username, password, profilePicture, paypalUsername) 
-			VALUES("${body.username}", "${body.password}", "pic_${body.username}", "${body.paypalUsername}");`
+		const sql = `INSERT INTO users(username, password, profilePicture, paypalUsername, emailAddress) 
+			VALUES("${body.username}", "${body.password}", "pic_${body.username}", "${body.paypalUsername}", "${body.emailAddress}");`
 		console.log(sql)
 		await db.run(sql)
 		await db.close()
@@ -265,6 +272,7 @@ router.post('/uploadItem', koaBody, async ctx => {
 			var time = new Date();
 			const dir = ctx.session.user + time.getFullYear().toString() + time.getMonth().toString() + time.getDay().toString() + time.getTime().toString() + i
 			const fileDir = 'public/Items/item_' + dir + '.png'
+			
 			console.log(fileDir)
 			await fs.copy(path, fileDir)
 			
@@ -279,7 +287,7 @@ router.post('/uploadItem', koaBody, async ctx => {
 		console.log(record)
 
 		// insert the item into the db including the userID
-		await db.run(`INSERT INTO items(item, price, imageDir1, imageDir2, imageDir3, userID, status) VALUES("${body.item}", "${body.price}", "${dbDir[0]}", "${dbDir[1]}", "${dbDir[2]}", "${record.userID}", true)`)
+		await db.run(`INSERT INTO items(item, year, price, artist, medium, size, sDescription, lDescription, imageDir1, imageDir2, imageDir3, userID, status) VALUES("${body.item}", "${body.year}", "${body.price}", "${body.artist}", "${body.medium}", "${body.size}", "${body.sDescription}", "${body.lDescription}", "${dbDir[0]}", "${dbDir[1]}", "${dbDir[2]}", "${record.userID}", true)`)
 		await db.close()
 
 		// redirect to my items page
@@ -376,11 +384,110 @@ router.get('/buy/:id', async ctx => {
 
 })
 
+router.get('/contactSeller/:id', async ctx => {
+	try {
+		// Check if the user is logged in - or send them back to the login page
+		console.log(ctx.session.authorised)
+		if(ctx.session.authorised !== true) 
+			return ctx.redirect('/login?errorMsg=you are not logged in')
+		const db = await Database.open(dbName)
+		console.log(`item id: ${ctx.params.id}`)
+		const data = {}
+		const record = await db.get(`SELECT * FROM items WHERE itemID = ${ctx.params.id};`)
+		// check if the item exists
+		if(record === undefined) throw new Error('unrecogised item')
+		const itemUser = await db.get(`SELECT * FROM users WHERE userID = ${record.userID};`)
+		// set the data - item info + user info
+
+
+		if(ctx.query.errorMsg) data.errorMsg = ctx.query.errorMsg
+		if(ctx.query.successMsg) data.successMsg = ctx.query.successMsg
+		data.authorised = ctx.session.authorised
+		await ctx.render('contactSeller', {item: record, seller: itemUser, data: data})
+	} catch(err) {
+		console.error(err.message)
+		await ctx.render('error', {message: err.message})
+	}
+})
+
+router.post('/email', async ctx => {
+	if(ctx.session.authorised !== true) 
+		return ctx.redirect('/login?errorMsg=you are not logged in')
+		try {
+			const body = ctx.request.body
+			const db = await Database.open(dbName)
+			const itemRecord = await db.get(`SELECT * FROM items WHERE itemID = ${body.itemID};`)
+			const sellerRecord = await db.get(`SELECT * FROM users WHERE userID = "${itemRecord.userID}";`)
+			const userRecord = await db.get(`SELECT * FROM users WHERE username = "${ctx.session.user}";`)
+			await db.close()
+	
+			const output = `
+			<p>Hi ${sellerRecord.username},</p>
+			<p>You have a new question about an item you are selling: ${itemRecord.item}</p>
+			<p>${userRecord.username} asks:</p>
+			<p>${body.message}</p>
+			<p>Thank you.</p>
+		  `;
+	
+		var transporter = nodemailer.createTransport({
+			host: "smtp-mail.outlook.com", // hostname
+			secureConnection: false, // TLS requires secureConnection to be false
+			port: 587, // port for secure SMTP
+			tls: {
+			   ciphers:'SSLv3'
+			},
+			auth: {
+				user: 'hooglywooglyboogly6969@outlook.com', // dont steal my acc!!!
+				pass: 'Supertester123'  // stop looking!!!
+			}
+		});
+		
+		  // setup email data with unicode symbols
+		  let mailOptions = {
+			  from: '"WebX Team" <hooglywooglyboogly6969@outlook.com>', // sender address
+			  to: `${sellerRecord.emailAddress}`, // list of receivers
+			  subject: 'New message about an item', // Subject line
+			  text: 'Hello world?', // plain text body
+			  html: output // html body
+		  };
+		
+		  // send mail with defined transport object
+		  transporter.sendMail(mailOptions, (error, info) => {
+			  if (error) {
+				  return console.log(error);
+			  }
+			  console.log('Message sent: %s', info.messageId);   
+			  console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
+			  
+		  });
+
+		  return ctx.redirect(`/${body.itemID}?successMsg=Message Sent...`);
+	
+		} catch(err) {
+			console.log(err.message)
+			await ctx.render('error', {message: err.message})
+		}
+})
+
+
+
 module.exports = app.listen(port, async() => {
 	// create the db if it doesnt exist - for users running first time
 	const db = await Database.open(dbName)
-	await db.run('CREATE TABLE IF NOT EXISTS users (userID INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, password TEXT, profilePicture TEXT, paypalUsername TEXT);')
+	await db.run('CREATE TABLE IF NOT EXISTS users (userID INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, password TEXT, profilePicture TEXT, paypalUsername TEXT, emailAddress TEXT);')
 	await db.run('CREATE TABLE IF NOT EXISTS items (itemID INTEGER PRIMARY KEY AUTOINCREMENT, userID INTEGER, item TEXT, year INTEGER, price TEXT, artist TEXT, medium TEXT, size TEXT, sDescription TEXT, lDescription TEXT, imageDir1 TEXT, imageDir2 TEXT, imageDir3 TEXT, status BOOLEAN);')
 	await db.close()
 	console.log(`listening on port ${port}`)
 })
+
+
+/*
+			var options = {
+				'text' : 'sample watermark', 
+				'resize' : '100%',
+				'override-image' : true
+			};
+			watermark.embedWatermark('public/Items/item_aaa201910115740942361890.png', options);
+
+
+*/

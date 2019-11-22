@@ -49,22 +49,24 @@
                 </ul>
             </div>
         </div>
-
-
-        <h1>Sell an item</h1>
-        <hr>
-		<form action="/uploadItem" enctype="multipart/form-data" method="post">
-			<p>Item:<br /><input type="text" name="item" value=""></p>
-            <p>Price:<br /><input type="text" name="price"  value="£"></p>
-			<p>Item image:<br /><input type="file" name="image" multiple></p>
+		<form class="sell_form" action="/uploadItem" enctype="multipart/form-data" method="post">
+            <p>To list an item please fill in all of the information about it</p>
+			<p>Name:*<br /><input id="sell_form-item" type="text" name="item" value="" placeholder="e.g. The Kiss" required></p>
+			<p>Year:*<br /><input id="sell_form-year" type="text" name="year" value="" placeholder="e.g. 1908" required></p>
+            <p>Price:*<br /><input id="sell_form-price" type="text" name="price"  value="" required></p>
+            <p>Artist:*<br /><input id="sell_form-artist" type="text" name="artist"  value="" placeholder="e.g. Gustav Klimt" required></p>
+			<p>Medium:*<br /><input id="sell_form-medium" type="text" name="medium" value="" placeholder="e.g. Oil on canvas painting" required></p>
+			<p>Size:*<br /><input id="sell_form-size" type="text" name="size" value="" placeholder="e.g. 180 cm x 180 cm" required></p>
+			<p>Short Description:*<br/><textarea id="sell_form-sDescription" cols="36" rows="5" name="sDescription" value="" placeholder="e.g. The painting depicts a couple embracing each other, their bodies entwined in elaborate beautiful robes decorated in a style influenced by the contemporary Art Nouveau style and the organic forms of the earlier Arts and Crafts movement." required></textarea></p>
+			<p>Long Description:*<br/><textarea id="sell_form-lDescription" cols="36" rows="5" name="lDescription" value="" placeholder="e.g. Gustav Klimt depicts the couple locked in an intimate embrace against a gold, flat background. The two figures are situated at the edge of a patch of flowery meadow that ends under the woman's exposed feet. The man wears a robe printed with geometric patterns and subtle swirls. He wears a crown of vines while the woman wears a crown of flowers. She is shown in a flowing dress with floral patterns. The man's face is not shown to the audience and instead, his face is bent downward to press a kiss to the woman's cheek, and his hands are cradling the woman's face. Her eyes are closed, with one arm wrapped around the man's neck, the other resting gently on his hand, and her face is upturned to receive the man's kiss. ." required></textarea></p>
+            <p>Select up to three images</p>
+			<p>Item images:*<br /><input type="file" name="image" multiple required></p>
 			<p><input type="submit" value="Upload"></p>
 		</form>
     </section>
 </body>
 
 <footer> 
-    <br>
-    <br>
-    <a href="http://localhost:8080">Click here to go Home</a>
+
 </footer>
 </html>
