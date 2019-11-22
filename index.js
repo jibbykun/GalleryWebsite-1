@@ -166,7 +166,15 @@ router.get('/account', async ctx => {
 	if(ctx.query.errorMsg) data.errorMsg = ctx.query.errorMsg
 	if(ctx.query.successMsg) data.successMsg = ctx.query.successMsg
 	data.authorised = ctx.session.authorised
-	await ctx.render('account', data)  
+	// Getting Profile Picture and Username from Database
+	const db = await Database.open(dbName)
+	const record = await db.get(`SELECT profilePicture FROM users WHERE username = "${ctx.session.user}";`)
+	const record2 = await db.get(`SELECT username FROM users WHERE username = "${ctx.session.user}";`)
+	console.log(record,record2)
+	await db.close()
+	data.usName = record2.username
+	data.picDir = 'ProfilePictures/' + record.profilePicture + '.png'
+	await ctx.render('account', data) 
 })
 
 router.get('/profilePic', async ctx => {
