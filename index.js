@@ -84,6 +84,51 @@ router.get('/register', async ctx => {
 	await ctx.render('register', data)
 })
 
+
+router.get('/changePassword', async ctx => {
+	if(ctx.session.authorised !== true) 
+		return ctx.redirect('/login?errorMsg=you are not logged in')
+	// Check for validation messages
+	const data = {}
+	if(ctx.query.errorMsg) data.errorMsg = ctx.query.errorMsg
+	if(ctx.query.successMsg) data.successMsg = ctx.query.successMsg
+	data.authorised = ctx.session.authorised
+	await ctx.render('changePassword', data)
+})
+
+router.post('/changePassword', async ctx => {
+	if(ctx.session.authorised !== true) 
+		return ctx.redirect('/login?errorMsg=you are not logged in')
+	try {
+		console.log(ctx.request.body)
+		const body = ctx.request.body
+		const db = await Database.open(dbName)
+		// check if the password is at least 10 characters long
+		if (body.password.length < 10)
+			return ctx.redirect("/changepassword?errorMsg=Password must be at least 10 characters")
+		// check if the password contains an uppercase character
+		if (!/[A-Z]/.test(body.password))
+			return ctx.redirect("/changepassword?errorMsg=Password must contain at least one uppercase character")
+		// check if the password contains a number
+		if (!/\d/.test(body.password))
+			return ctx.redirect("/changepassword?errorMsg=Password must contain at least one number")
+		// check if the passwords match
+		if (body.password != body.passwordRepeat)
+			return ctx.redirect("/changepassword?errorMsg=Passwords do not match")
+		// encrypt the password
+		body.password = await bcrypt.hash(body.password, saltRounds)
+		// Update the password in the db - success!
+		const sql = `UPDATE users  SET password =  "${body.password}" WHERE username="${ctx.session.user}";`
+		console.log(sql)
+		await db.run(sql)
+		await db.close()
+		ctx.redirect('/changepassword?successMsg=You have successfully changed your password!')
+	} catch(err) {
+		ctx.body = err.message
+	}  	
+})
+
+
 router.post('/register', async ctx => {
 	if(ctx.session.authorised == true) 
 		return ctx.redirect('/')
