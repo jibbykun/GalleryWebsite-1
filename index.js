@@ -113,6 +113,37 @@ router.post('/changeEmail', async ctx => {
 	}  	
 })
 
+
+
+router.get('/changePaypal', async ctx => {
+	if(ctx.session.authorised !== true) 
+		return ctx.redirect('/login?errorMsg=you are not logged in')
+	// Check for validation messages
+	const data = {}
+	if(ctx.query.errorMsg) data.errorMsg = ctx.query.errorMsg
+	if(ctx.query.successMsg) data.successMsg = ctx.query.successMsg
+	data.authorised = ctx.session.authorised
+	await ctx.render('changePaypal', data)
+})
+
+router.post('/changePaypal', async ctx => {
+	if(ctx.session.authorised !== true) 
+		return ctx.redirect('/login?errorMsg=you are not logged in')
+	try {
+		console.log(ctx.request.body)
+		const body = ctx.request.body
+		const db = await Database.open(dbName)
+		// Update the email in the db - success!
+		const sql = `UPDATE users  SET paypalUsername =  "${body.paypalUsername}" WHERE username="${ctx.session.user}";`
+		console.log(sql)
+		await db.run(sql)
+		await db.close()
+		ctx.redirect('/changePaypal?successMsg=You have successfully changed your Paypal Username!')
+	} catch(err) {
+		ctx.body = err.message
+	}  	
+})
+
 router.get('/changeUsername', async ctx => {
 	if(ctx.session.authorised !== true) 
 		return ctx.redirect('/login?errorMsg=you are not logged in')
