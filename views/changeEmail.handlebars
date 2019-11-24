@@ -1,8 +1,9 @@
-<!DOCTYPE html>
+<!doctype html>
+
 <html>
     <head>
         <meta charset="UTF-8", content="width=device-width, initial-scale=1">
-        <title>Account</title><html>
+        <title>Contact</title><html>
         <link rel="stylesheet" type="text/css" href="style.css">
         <script type="text/javascript">
             function toggleSidemenu(){ 
@@ -16,6 +17,7 @@
     </head>
 
 <body id="body">
+
     	{{#if successMsg}}
  			<p class="msg-success">{{successMsg}}</p>
 		{{/if}}
@@ -50,65 +52,26 @@
             </div>
         </div>
 
-        <h1>Account Settings</h1>
-    
-        
-        <div class="profilepictureframe">
-            <p>Current Profile Picture</p>
-            <hr>
-            </br>
-            </br>
-            </br>
-            <a target="_blank" href="{{picDir}}">
-                <img src="{{picDir}}" alt="No profile picture" width="600" height="400" class = "profilepicture" >
-            </a>
-            </br>
-            </br>
-            </br>
-            <hr>
-            <a href="profilePic">Update your profile picture</a>
-        </div>
-
-        <div class="accountleftframe">
-
-            <h2> Username </h2> 
-            <hr>
-            <h3> {{usName}} </h3>
-            </br>
-            <h2> Date Created </h2>
-            <hr>
-            </br>
-            </br>
-            </br>
-            </br>
-            <h2> Settings </h2>
+    <h2> Change your Email Address </h2>
+    <hr>
+    <br>
+    <form action="/changeemail" method="POST">
+            
             <br>
-            <a href="changePassword">Change your current password</a>
-            <hr>
-            </br>
-            <a href="changeEmail">Change your Email Address</a>
-            <hr>
-            </br>
-            <a href="changeUsername">Change your Username</a>
-            <hr>
-            </br>
-            <a href="changePaypal">Change your PayPal username</a>
-            <hr>
-        </div>
 
-
-
-
-
+             <div>
+                <label for="Email"><b>Email Address: </b></label>
+                <input type="text" placeholder="Enter Email Address" name="emailAddress" required>
+            </div>
         
+            <p><input type="submit" value="Change"></p>
+        </form>
+
+
     </section>
 </body>
 
 <footer> 
-    <br>
-    <br>
-    <br>
-    <br>
     <br>
     <br>
     <a href="http://localhost:8080">Click here to go Home</a>
