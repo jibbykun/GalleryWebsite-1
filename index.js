@@ -84,6 +84,68 @@ router.get('/register', async ctx => {
 	await ctx.render('register', data)
 })
 
+router.get('/changeEmail', async ctx => {
+	if(ctx.session.authorised !== true) 
+		return ctx.redirect('/login?errorMsg=you are not logged in')
+	// Check for validation messages
+	const data = {}
+	if(ctx.query.errorMsg) data.errorMsg = ctx.query.errorMsg
+	if(ctx.query.successMsg) data.successMsg = ctx.query.successMsg
+	data.authorised = ctx.session.authorised
+	await ctx.render('changeEmail', data)
+})
+
+router.post('/changeEmail', async ctx => {
+	if(ctx.session.authorised !== true) 
+		return ctx.redirect('/login?errorMsg=you are not logged in')
+	try {
+		console.log(ctx.request.body)
+		const body = ctx.request.body
+		const db = await Database.open(dbName)
+		// Update the email in the db - success!
+		const sql = `UPDATE users  SET emailAddress =  "${body.emailAddress}" WHERE username="${ctx.session.user}";`
+		console.log(sql)
+		await db.run(sql)
+		await db.close()
+		ctx.redirect('/changeEmail?successMsg=You have successfully changed your email address!')
+	} catch(err) {
+		ctx.body = err.message
+	}  	
+})
+
+router.get('/changeUsername', async ctx => {
+	if(ctx.session.authorised !== true) 
+		return ctx.redirect('/login?errorMsg=you are not logged in')
+	// Check for validation messages
+	const data = {}
+	if(ctx.query.errorMsg) data.errorMsg = ctx.query.errorMsg
+	if(ctx.query.successMsg) data.successMsg = ctx.query.successMsg
+	data.authorised = ctx.session.authorised
+	await ctx.render('changeUsername', data)
+})
+
+router.post('/changeUsername', async ctx => {
+	if(ctx.session.authorised !== true) 
+		return ctx.redirect('/login?errorMsg=you are not logged in')
+	try {
+		console.log(ctx.request.body)
+		const body = ctx.request.body
+		const db = await Database.open(dbName)
+		// Update the username in the db - success!
+		const sql = `UPDATE users  SET username =  "${body.username}" WHERE username="${ctx.session.user}";`
+		console.log(sql)
+		await db.run(sql)
+		await db.close()
+		// Make them log back into their accounts
+		ctx.session.authorised = null
+		ctx.session.user = null
+		console.log(ctx.session.authorised)
+		ctx.redirect('/login?successMsg=You have changed your username now log back in')	
+	} catch(err) {
+		ctx.body = err.message
+	}  	
+})
+
 
 router.get('/changePassword', async ctx => {
 	if(ctx.session.authorised !== true) 
@@ -122,7 +184,11 @@ router.post('/changePassword', async ctx => {
 		console.log(sql)
 		await db.run(sql)
 		await db.close()
-		ctx.redirect('/changepassword?successMsg=You have successfully changed your password!')
+		// Make them log back into their accounts
+		ctx.session.authorised = null
+		ctx.session.user = null
+		console.log(ctx.session.authorised)
+		ctx.redirect('/login?successMsg=You have changed your password now log back in')	
 	} catch(err) {
 		ctx.body = err.message
 	}  	
