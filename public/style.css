@@ -99,6 +99,28 @@ body {
   height: 70px;
   background: #f5f4f2;
 }
+
+/* ####### someone please explain me why these aren't affecting the search bar*/
+
+.search-container {
+  position: relative;
+  right: 0;
+}
+
+.search-container  button:hover {
+  background: #ccc;
+}
+
+.search-container input[type=text], .search-container button {
+
+  padding: 6px 10px;
+  border: none;
+  margin-top: 8px;
+  margin-right: 16px;
+  font-size: 17px;
+}
+
+
 .header_logo, .header_logo button, .header_logo img, .header_logo a{
   height: 70px;
   width: 70px;
