@@ -57,13 +57,13 @@
             </div>
             <div class="detail_description">
                 <p>{{sDescription}}</p>
-                <p>Price: {{price}}</p>
+                <p>Price: £{{price}}</p>
                 <p>Artist: {{artist}}</p>
                 <p>Medium: {{medium}}</p>
                 <p>Size: {{size}}</p>
                 <p>Reference: #{{itemID}}</p>
                 <a href="/buy/{{itemID}}"><button id="detail_description-buyitnow"><h3>Buy it Now</h3></button></a>
-                <button id="detail_description-addtobasket"><h3>Add to basket</h3></button>
+                <a href="/{{itemID}}/add-to-basket"><button id="detail_description-addtobasket"><h3>Add to basket</h3></button></a>
                 <button id="detail_description-favourite"><h3>Favourite</h3></button>
             </div>
         </div>
@@ -120,6 +120,5 @@
             previewPics[i].classList.remove("inactive")
         })
     }
-    //Open high res image
 </script>
 </html>

@@ -67,10 +67,53 @@ router.get('/contact', async ctx =>{
 	data.authorised = ctx.session.authorised
 	await ctx.render('contact', data)
 })
-router.get('/payment', async ctx =>{ 
+router.get('/basket', async ctx =>{ 
+	if(ctx.session.authorised !== true) 
+		return ctx.redirect('/login?errorMsg=you are not logged in')
+	// Check for validation messages
+	const db = await Database.open(dbName)
+	// get the userID from the db
 	const data = {}
+	const user = await db.get(`SELECT * FROM users WHERE username = "${ctx.session.user}";`)
+	const basket = await db.all(`SELECT itemID FROM basket WHERE userID = "${user.userID}";`)
+	let items = []
+	let total = 0
+	for(var i = 0; i < basket.length - 1; i++){
+		items.push(await db.all(`SELECT * FROM items WHERE itemID = "${basket[i].itemID}";`))
+		
+		total += parseInt(items[i].price)
+	}
+	console.log(items[0].price)
+	data.total = total
 	data.authorised = ctx.session.authorised
-	await ctx.render('payment', data)
+	
+	if(ctx.query.errorMsg) data.errorMsg = ctx.query.errorMsg
+	if(ctx.query.successMsg) data.successMsg = ctx.query.successMsg
+	data.authorised = ctx.session.authorised
+	await ctx.render('basket', {items: items, user: user, data: data})
+})
+router.get('/checkout', async ctx =>{ 
+	if(ctx.session.authorised !== true) 
+		return ctx.redirect('/login?errorMsg=you are not logged in')
+	// Check for validation messages
+	const db = await Database.open(dbName)
+	// get the userID from the db
+	const data = {}
+	const user = await db.get(`SELECT * FROM users WHERE username = "${ctx.session.user}";`)
+	const basket = await db.all(`SELECT itemID FROM basket WHERE userID = "${user.userID}";`)
+	let items = {}
+	let total = 0
+	for(var i = 0; i < basket.length; i++){
+		items.push(await db.all(`SELECT * FROM items WHERE itemID = "${basket[i].itemID}";`))
+		total += parseInt(items[i].price)
+	}
+	data.total = total
+	data.authorised = ctx.session.authorised
+	
+	if(ctx.query.errorMsg) data.errorMsg = ctx.query.errorMsg
+	if(ctx.query.successMsg) data.successMsg = ctx.query.successMsg
+	data.authorised = ctx.session.authorised
+	await ctx.render('checkout', {items: items, user: user, data: data})
 })
 
 router.get('/register', async ctx => {
@@ -479,36 +522,43 @@ router.get('/:id', async ctx => {
 		if(record === undefined) throw new Error('unrecogised item')
 		const itemUser = await db.get(`SELECT * FROM users WHERE userID = ${record.userID};`)
 		// set the data - item info + user info
-		data.item = record.item
-		data.year = record.year
-		data.price = record.price
-		data.artist = record.artist
-		data.medium = record.medium
-		data.size = record.size
-		data.itemID = record.itemID
-		data.sDescription = record.sDescription
-		data.lDescription = record.lDescription
-		
-		data.imageDir1 = record.imageDir1
-		data.imageDir2 = record.imageDir2
-		data.imageDir3 = record.imageDir3
-		data.imageDir4 = record.imageDir4
-		data.imageDir5 = record.imageDir5
-
-
-		data.username = itemUser.username
-		data.picDir = 'ProfilePictures/' + itemUser.profilePicture + '.png'
-
+		record.username = itemUser.username
 		if(ctx.query.errorMsg) data.errorMsg = ctx.query.errorMsg
 		if(ctx.query.successMsg) data.successMsg = ctx.query.successMsg
 		data.authorised = ctx.session.authorised
-		await ctx.render('itemDetails', data)
+		await ctx.render('itemDetails', record)
 	} catch(err) {
 		console.error(err.message)
 		await ctx.render('error', {message: err.message})
 	}
 })
-
+router.get('/:id/add-to-basket', async ctx => {
+	try {
+		// Check if the user is logged in - or send them back to the login page
+		console.log(ctx.session.authorised)
+		if(ctx.session.authorised !== true) 
+			return ctx.redirect('/login?errorMsg=you are not logged in')
+		// check if the item exists
+		const db = await Database.open(dbName)
+		const record = await db.get(`SELECT * FROM items WHERE itemID = ${ctx.params.id};`)
+		if(record === undefined) throw new Error('unrecognised item')
+		// check if the item is for sale
+		if(record.status === false) 
+			return ctx.redirect(`/${ctx.params.id}?errorMsg=Item not for sale`)
+		const itemUser = await db.get(`SELECT * FROM users WHERE userID = ${record.userID};`)
+		if (itemUser.username === ctx.session.user) 
+			return ctx.redirect(`/${ctx.params.id}?errorMsg=Seller cannot buy their own item`)
+		const user = await db.get(`SELECT * FROM users WHERE username = "${ctx.session.user}";`)
+		if(await db.get(`SELECT * FROM basket WHERE userID = "${ctx.params.id}" AND itemID = "${ctx.params.id}";`).count){
+			return ctx.redirect(`/${ctx.params.id}?errorMsg=Item already in your basket`)
+		}
+		await db.run(`INSERT INTO basket(userID, itemID) VALUES("${user.userID}", "${ctx.params.id}")`)
+		ctx.redirect(`/${record.itemID}`)
+	} catch(err) {
+		console.error(err.message)
+		await ctx.render('error', {message: err.message})
+	}
+})
 router.get('/buy/:id', async ctx => {
 	if(ctx.session.authorised !== true) 
 		return ctx.redirect('/login?errorMsg=you are not logged in')
@@ -517,7 +567,7 @@ router.get('/buy/:id', async ctx => {
 			console.log(`item id: ${ctx.params.id}`)
 			const record = await db.get(`SELECT * FROM items WHERE itemID = ${ctx.params.id};`)
 			// check if the item exists
-			if(record === undefined) throw new Error('unrecogised item')
+			if(record === undefined) throw new Error('unrecognised item')
 			// check if the item is for sale
 			if(record.status === false) 
 				return ctx.redirect(`/${ctx.params.id}?errorMsg=Item not for sale`)
@@ -531,7 +581,6 @@ router.get('/buy/:id', async ctx => {
 			console.error(err.message)
 			await ctx.render('error', {message: err.message})
 		}
-
 })
 
 router.get('/contactSeller/:id', async ctx => {
@@ -626,6 +675,7 @@ module.exports = app.listen(port, async() => {
 	const db = await Database.open(dbName)
 	await db.run('CREATE TABLE IF NOT EXISTS users (userID INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, password TEXT, profilePicture TEXT, paypalUsername TEXT, emailAddress TEXT);')
 	await db.run('CREATE TABLE IF NOT EXISTS items (itemID INTEGER PRIMARY KEY AUTOINCREMENT, userID INTEGER, item TEXT, year INTEGER, price TEXT, artist TEXT, medium TEXT, size TEXT, sDescription TEXT, lDescription TEXT, imageDir1 TEXT, imageDir2 TEXT, imageDir3 TEXT, status BOOLEAN);')
+	await db.run('CREATE TABLE IF NOT EXISTS basket (userID INTEGER, itemID INTEGER, CONSTRAINT userID FOREIGN KEY (userID) REFERENCES users(userID),  CONSTRAINT itemID FOREIGN KEY (itemID) REFERENCES items(itemID));')
 	await db.close()
 	console.log(`listening on port ${port}`)
 })
