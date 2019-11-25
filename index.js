@@ -12,6 +12,7 @@ const views = require('koa-views')
 const koaBody = require('koa-body')({multipart: true, uploadDir: '.'})
 const fs = require('fs-extra')
 const mime = require('mime-types')
+const watermark = require('image-watermark');
 const nodemailer = require('nodemailer');
 
 const app = new Koa()
@@ -66,6 +67,11 @@ router.get('/contact', async ctx =>{
 	data.authorised = ctx.session.authorised
 	await ctx.render('contact', data)
 })
+router.get('/payment', async ctx =>{ 
+	const data = {}
+	data.authorised = ctx.session.authorised
+	await ctx.render('payment', data)
+})
 
 router.get('/register', async ctx => {
 	if(ctx.session.authorised == true) 
@@ -77,6 +83,148 @@ router.get('/register', async ctx => {
 	data.authorised = ctx.session.authorised
 	await ctx.render('register', data)
 })
+
+router.get('/changeEmail', async ctx => {
+	if(ctx.session.authorised !== true) 
+		return ctx.redirect('/login?errorMsg=you are not logged in')
+	// Check for validation messages
+	const data = {}
+	if(ctx.query.errorMsg) data.errorMsg = ctx.query.errorMsg
+	if(ctx.query.successMsg) data.successMsg = ctx.query.successMsg
+	data.authorised = ctx.session.authorised
+	await ctx.render('changeEmail', data)
+})
+
+router.post('/changeEmail', async ctx => {
+	if(ctx.session.authorised !== true) 
+		return ctx.redirect('/login?errorMsg=you are not logged in')
+	try {
+		console.log(ctx.request.body)
+		const body = ctx.request.body
+		const db = await Database.open(dbName)
+		// Update the email in the db - success!
+		const sql = `UPDATE users  SET emailAddress =  "${body.emailAddress}" WHERE username="${ctx.session.user}";`
+		console.log(sql)
+		await db.run(sql)
+		await db.close()
+		ctx.redirect('/changeEmail?successMsg=You have successfully changed your email address!')
+	} catch(err) {
+		ctx.body = err.message
+	}  	
+})
+
+
+
+router.get('/changePaypal', async ctx => {
+	if(ctx.session.authorised !== true) 
+		return ctx.redirect('/login?errorMsg=you are not logged in')
+	// Check for validation messages
+	const data = {}
+	if(ctx.query.errorMsg) data.errorMsg = ctx.query.errorMsg
+	if(ctx.query.successMsg) data.successMsg = ctx.query.successMsg
+	data.authorised = ctx.session.authorised
+	await ctx.render('changePaypal', data)
+})
+
+router.post('/changePaypal', async ctx => {
+	if(ctx.session.authorised !== true) 
+		return ctx.redirect('/login?errorMsg=you are not logged in')
+	try {
+		console.log(ctx.request.body)
+		const body = ctx.request.body
+		const db = await Database.open(dbName)
+		// Update the email in the db - success!
+		const sql = `UPDATE users  SET paypalUsername =  "${body.paypalUsername}" WHERE username="${ctx.session.user}";`
+		console.log(sql)
+		await db.run(sql)
+		await db.close()
+		ctx.redirect('/changePaypal?successMsg=You have successfully changed your Paypal Username!')
+	} catch(err) {
+		ctx.body = err.message
+	}  	
+})
+
+router.get('/changeUsername', async ctx => {
+	if(ctx.session.authorised !== true) 
+		return ctx.redirect('/login?errorMsg=you are not logged in')
+	// Check for validation messages
+	const data = {}
+	if(ctx.query.errorMsg) data.errorMsg = ctx.query.errorMsg
+	if(ctx.query.successMsg) data.successMsg = ctx.query.successMsg
+	data.authorised = ctx.session.authorised
+	await ctx.render('changeUsername', data)
+})
+
+router.post('/changeUsername', async ctx => {
+	if(ctx.session.authorised !== true) 
+		return ctx.redirect('/login?errorMsg=you are not logged in')
+	try {
+		console.log(ctx.request.body)
+		const body = ctx.request.body
+		const db = await Database.open(dbName)
+		// Update the username in the db - success!
+		const sql = `UPDATE users  SET username =  "${body.username}" WHERE username="${ctx.session.user}";`
+		console.log(sql)
+		await db.run(sql)
+		await db.close()
+		// Make them log back into their accounts
+		ctx.session.authorised = null
+		ctx.session.user = null
+		console.log(ctx.session.authorised)
+		ctx.redirect('/login?successMsg=You have changed your username now log back in')	
+	} catch(err) {
+		ctx.body = err.message
+	}  	
+})
+
+
+router.get('/changePassword', async ctx => {
+	if(ctx.session.authorised !== true) 
+		return ctx.redirect('/login?errorMsg=you are not logged in')
+	// Check for validation messages
+	const data = {}
+	if(ctx.query.errorMsg) data.errorMsg = ctx.query.errorMsg
+	if(ctx.query.successMsg) data.successMsg = ctx.query.successMsg
+	data.authorised = ctx.session.authorised
+	await ctx.render('changePassword', data)
+})
+
+router.post('/changePassword', async ctx => {
+	if(ctx.session.authorised !== true) 
+		return ctx.redirect('/login?errorMsg=you are not logged in')
+	try {
+		console.log(ctx.request.body)
+		const body = ctx.request.body
+		const db = await Database.open(dbName)
+		// check if the password is at least 10 characters long
+		if (body.password.length < 10)
+			return ctx.redirect("/changepassword?errorMsg=Password must be at least 10 characters")
+		// check if the password contains an uppercase character
+		if (!/[A-Z]/.test(body.password))
+			return ctx.redirect("/changepassword?errorMsg=Password must contain at least one uppercase character")
+		// check if the password contains a number
+		if (!/\d/.test(body.password))
+			return ctx.redirect("/changepassword?errorMsg=Password must contain at least one number")
+		// check if the passwords match
+		if (body.password != body.passwordRepeat)
+			return ctx.redirect("/changepassword?errorMsg=Passwords do not match")
+		// encrypt the password
+		body.password = await bcrypt.hash(body.password, saltRounds)
+		// Update the password in the db - success!
+		const sql = `UPDATE users  SET password =  "${body.password}" WHERE username="${ctx.session.user}";`
+		console.log(sql)
+		await db.run(sql)
+		await db.close()
+		// Make them log back into their accounts
+		ctx.session.authorised = null
+		ctx.session.user = null
+		console.log(ctx.session.authorised)
+		ctx.redirect('/login?successMsg=You have changed your password now log back in')	
+	} catch(err) {
+		ctx.body = err.message
+	}  	
+})
+
 
 router.post('/register', async ctx => {
 	if(ctx.session.authorised == true) 
@@ -160,7 +308,15 @@ router.get('/account', async ctx => {
 	if(ctx.query.errorMsg) data.errorMsg = ctx.query.errorMsg
 	if(ctx.query.successMsg) data.successMsg = ctx.query.successMsg
 	data.authorised = ctx.session.authorised
-	await ctx.render('account', data)  
+	// Getting Profile Picture and Username from Database
+	const db = await Database.open(dbName)
+	const record = await db.get(`SELECT profilePicture FROM users WHERE username = "${ctx.session.user}";`)
+	const record2 = await db.get(`SELECT username FROM users WHERE username = "${ctx.session.user}";`)
+	console.log(record,record2)
+	await db.close()
+	data.usName = record2.username
+	data.picDir = 'ProfilePictures/' + record.profilePicture + '.png'
+	await ctx.render('account', data) 
 })
 
 router.get('/profilePic', async ctx => {
@@ -266,6 +422,7 @@ router.post('/uploadItem', koaBody, async ctx => {
 			var time = new Date();
 			const dir = ctx.session.user + time.getFullYear().toString() + time.getMonth().toString() + time.getDay().toString() + time.getTime().toString() + i
 			const fileDir = 'public/Items/item_' + dir + '.png'
+			
 			console.log(fileDir)
 			await fs.copy(path, fileDir)
 			
@@ -472,3 +629,15 @@ module.exports = app.listen(port, async() => {
 	await db.close()
 	console.log(`listening on port ${port}`)
 })
+
+
+/*
+			var options = {
+				'text' : 'sample watermark', 
+				'resize' : '100%',
+				'override-image' : true
+			};
+			watermark.embedWatermark('public/Items/item_aaa201910115740942361890.png', options);
+
+
+*/
