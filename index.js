@@ -407,6 +407,7 @@ router.post('/uploadItem', koaBody, async ctx => {
 				console.log(fileDir)
 				await fs.copy(path, fileDir)
 				
+				
 				// Directory for image to go in db
 				dbDir[0] = 'Items/item_' + dir + '.png'
 			}
@@ -618,6 +619,30 @@ router.post('/email', async ctx => {
 			await ctx.render('error', {message: err.message})
 		}
 })
+
+router.post('/search', async ctx => {
+	try {
+		const body = ctx.request.body
+		const db = await Database.open(dbName)
+		const data = {}
+		// Check if there is a search result
+		const records = await db.get(`SELECT count(itemID) AS count FROM items WHERE item LIKE "%${body.search}%";`)
+		// no search result - go back
+		if(!records.count) 
+			return ctx.redirect('/?errorMsg=No items found.')
+
+		// run the query and render the index page 
+		const item = await db.all(`SELECT * FROM items WHERE item LIKE '%${body.search}%';`)
+			
+		await db.close()
+		await ctx.render('index', {items: item, data: data})
+	} catch(err) {
+		console.error(err.message)
+		await ctx.render('error', {message: err.message})
+	}
+})
+
+
 
 
 
