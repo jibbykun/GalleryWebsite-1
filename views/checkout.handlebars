@@ -3,7 +3,7 @@
 <html>
     <head>
         <meta charset="UTF-8", content="width=device-width, initial-scale=1">
-        <title>Contact</title><html>
+        <title>Checkout</title><html>
         <link rel="stylesheet" type="text/css" href="style.css">
         <script type="text/javascript">
             function toggleSidemenu(){ 
@@ -51,12 +51,38 @@
                 </ul>
             </div>
         </div>
+        <h1>You sent a payment of £{{data.total}} to {{userID}}</h1>
+        <table>
+            <tr>
+                <th><p>Item name</p></th>
+                <th><p>Unit price</p></th>
+                <th><p>Quantity</p></th>
+                <th><p>Amout</p></th>
+            </tr>
+            {{#each items}}
+                <tr>
+                    <td><p>{{item}}</p></td>
+                    <td><p>£{{price}}</p></td>
+                    <td><p>1</p></td>
+                    <td><p>£{{price}}</p></td>
+                </tr>
+            {{/each}}
+
+        </table>
+
+
+
     </section>
 </body>
 
-<footer> 
-    <br>
-    <br>
-    <a href="http://localhost:8080">Click here to go Home</a>
-</footer>
+<footer> </footer>
+<script>
+    const checkoutBtn = document.getElementById("basket_right-open")
+    const form = document.getElementsByClassName("disabled checkout_form")[0]
+
+    checkoutBtn.addEventListener('click', e => {
+        form.classList.remove("disabled")
+        checkoutBtn.classList.add("disabled")
+    })
+</script>
 </html>

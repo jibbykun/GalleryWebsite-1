@@ -1,0 +1,102 @@
+<!doctype html>
+
+<html>
+    <head>
+        <meta charset="UTF-8", content="width=device-width, initial-scale=1">
+        <title>Your basket</title><html>
+        <link rel="stylesheet" type="text/css" href="style.css">
+        <script type="text/javascript">
+            function toggleSidemenu(){ 
+                document.getElementById("sidemenu").classList.toggle('active')
+                if (document.getElementById("sidemenu").classList == 'active')
+                    document.getElementById("body").style.marginLeft = "200px";
+                else
+                    document.getElementById("body").style.marginLeft = "5px";
+            }
+        </script>
+    </head>
+
+<body id="body">
+
+    	{{#if successMsg}}
+ 			<p class="msg-success">{{successMsg}}</p>
+		{{/if}}
+        {{#if errorMsg}}
+ 			<p class="msg-danger">{{errorMsg}}</p>
+		{{/if}}
+    <section class="container">
+        <div class="header">
+            <a href="/" class="header_logo center"><button><img src="WebxLogo.png"/></button></a>
+            <div id="sidemenu">
+                <div class="toggle-btn" onclick="toggleSidemenu()">
+                    <a>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </a>
+                </div>
+                <ul>
+                    <li> <a href="/">Home </a> </li>
+                    {{#if authorised}}
+                        <li> <a href="sell">Sell </a> </li>
+                        <li> <a href="myItems">My Items </a> </li>
+                        <li> <a href="account">Account </a> </li>
+                        <li> <a href="logout">Logout </a> </li> 
+                    {{else}}
+                        <li> <a href="login">Login </a></li> 
+                        <li> <a href="register">Sign Up </a></li> 
+                    {{/if}}
+                    <li> <a href="about">About </a> </li> 
+                    <li> <a href="contact">Contact </a></li>
+                </ul>
+            </div>
+        </div>
+        <h1>Your basket</h1>
+        <div class="basket_left">
+            {{#each items}}
+                <div class="basket_left-item">
+                    <h3 class="center">Shipped and sold by {{userID}}</h3>
+                    <a href="/{{itemID}}"><img src="{{imageDir1}}" alt="No picture found" width="600" height="400"></a>
+                        <div class="basket_left-item-description">
+                            <a href="/{{itemID}}"><h3 id="basket_left-item-description-title">{{item}} ({{year}})</h3></a> <h3 id="basket_left-item-description-price">£{{price}}</h3>
+                            <p>{{sDescription}}</p>
+                            <p>By {{artist}}</p>
+                            <p>{{medium}}</p>
+                            <p>{{size}}</p>
+                            <p>#{{itemID}}</p>
+                            <h3 id="basket_left-item-description-remove">Remove</h3>
+                        </div>
+                        <hr>
+                </div>
+            {{/each}}
+        </div>
+        <div class="basket_right">
+            <h3 class="center">Order Summary</h3>
+            <h3 id="basket_right-total">Total: £{{data.total}}</h3>
+            <form class="disabled checkout_form" action="/checkout" enctype="multipart/form-data" method="post">
+                <p>Your PayPal username: {{user.paypalUsername}}</p>
+                <p>Your email address: {{user.emailAddress}}</p>
+                <h3 class="center">Enter your delivery address</h3>
+                <p>Address line 1:*<br /><input id="sell_form-item" type="text" name="addressline1" value="" placeholder="" required></p>
+                <p>Address line 2:<br /><input id="sell_form-year" type="text" name="addressline2" value="" placeholder=""></p>
+                <p>City:*<br /><input id="sell_form-price" type="text" name="city"  value="" required></p>
+                <p>Post Code:*<br /><input id="sell_form-artist" type="text" name="artist"  value="" placeholder="" required></p>
+                <input class="basket_right-btn" id="basket_right-checkout" type="submit" value="Checkout with PayPal">
+		    </form>
+            <input class="basket_right-btn" id="basket_right-open" type="submit" value="Checkout with PayPal">
+        </div>
+
+    </section>
+</body>
+
+<footer> </footer>
+<script>
+    const checkoutBtn = document.getElementById("basket_right-open")
+    const form = document.getElementsByClassName("disabled checkout_form")[0]
+
+    checkoutBtn.addEventListener('click', e => {
+        form.classList.remove("disabled")
+        checkoutBtn.classList.add("disabled")
+    })
+</script>
+</html>
