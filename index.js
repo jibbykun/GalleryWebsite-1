@@ -18,6 +18,16 @@ const nodemailer = require('nodemailer');
 const app = new Koa()
 const router = new Router()
 
+function emailvalidation(emailaddress) {
+	var pattern = /^(?:[\w\!\#\$\%\&\'\*\+\-\/\=\?\^\`\{\|\}\~]+\.)*[\w\!\#\$\%\&\'\*\+\-\/\=\?\^\`\{\|\}\~]+@(?:(?:(?:[a-zA-Z0-9](?:[a-zA-Z0-9\-](?!\.)){0,61}[a-zA-Z0-9]?\.)+[a-zA-Z0-9](?:[a-zA-Z0-9\-](?!$)){0,61}[a-zA-Z0-9]?)|(?:\[(?:(?:[01]?\d{1,2}|2[0-4]\d|25[0-5])\.){3}(?:[01]?\d{1,2}|2[0-4]\d|25[0-5])\]))$/;
+	if(!emailaddress.match(pattern)) {
+	  return false;
+	}
+	return true;
+  }
+
+
+
 app.keys = ['hidemyapp']
 app.use(staticDir('public'))
 app.use(bodyParser())
@@ -102,12 +112,18 @@ router.post('/changeEmail', async ctx => {
 		console.log(ctx.request.body)
 		const body = ctx.request.body
 		const db = await Database.open(dbName)
-		// Update the email in the db - success!
-		const sql = `UPDATE users  SET emailAddress =  "${body.emailAddress}" WHERE username="${ctx.session.user}";`
-		console.log(sql)
-		await db.run(sql)
-		await db.close()
-		ctx.redirect('/changeEmail?successMsg=You have successfully changed your email address!')
+		/* Sever Side Email Validation */
+		if (emailvalidation(body.emailAddress) == true){
+			// Update the email in the db if successful
+			const sql = `UPDATE users  SET emailAddress =  "${body.emailAddress}" WHERE username="${ctx.session.user}";`
+			console.log(sql)
+			await db.run(sql)
+			await db.close()
+			ctx.redirect('/changeEmail?successMsg=You have successfully changed your email address!')
+		}
+		else{
+			ctx.redirect('/changeEmail?errorMsg=Wrong format. Server Side Error!')
+		}
 	} catch(err) {
 		ctx.body = err.message
 	}  	
@@ -133,7 +149,7 @@ router.post('/changePaypal', async ctx => {
 		console.log(ctx.request.body)
 		const body = ctx.request.body
 		const db = await Database.open(dbName)
-		// Update the email in the db - success!
+		// Update the username in the db - success!
 		const sql = `UPDATE users  SET paypalUsername =  "${body.paypalUsername}" WHERE username="${ctx.session.user}";`
 		console.log(sql)
 		await db.run(sql)
