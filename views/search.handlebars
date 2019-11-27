@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8", content="width=device-width, initial-scale=1">
+        <title>Home</title><html>
+        <script defer src="https://use.fontawesome.com/releases/v5.0.6/js/all.js"></script>
+        <link rel="stylesheet" type="text/css" href="style.css">
+
+       
+        </script>
+    </head>
+
+<body id="body">
+    	{{#if data.successMsg}}
+ 			<p class="msg-success">{{data.successMsg}}</p>
+		{{/if}}
+        {{#if data.errorMsg}}
+ 			<p class="msg-danger">{{data.errorMsg}}</p>
+		{{/if}}
+    <section class="container">
+        <div class="header">
+            <a href="/" class="header_logo center"><button><img src="WebxLogo.png"/></button></a>
+            <section class="search-container" autocomplete="on"> </section>
+                <form action="/search">
+                    <input type="text" placeholder="Search..." name="q">
+                    <button type="submit"  class="searching">
+                    <i class="fa fa-search"></i>
+                </button>
+            </section>
+            
+    <div class="gallery">
+        {{#each items}}
+            <div class="gallery-item">
+                <a href="/{{itemID}}">
+                    <img src="{{imageDir1}}" alt="No picture found" width="600" height="400">
+                    <div class="gallery-item-description"><h3>{{item}}</h3> <p>{{price}}</p></div>
+                </a>
+            </div>
+        {{/each}}
+    </div>
+
+</body>
+<footer> 
+    <p>This webpage was made by WebX team.</p>
+    <p>Contact: example@email.com</p>
+</footer>
+
+</html>
