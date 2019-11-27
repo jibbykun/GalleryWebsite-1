@@ -27,12 +27,13 @@
     <section class="container">
         <div class="header">
             <a href="/" class="header_logo center"><button><img src="WebxLogo.png"/></button></a>
-            <section class="search-container" autocomplete="on"></section>
-                <form action="/search">
-                    <input type="text" placeholder="Search..." name="q">
+            <section class="search-container" autocomplete="on">
+                <form action="/search" method="POST">
+                    <input type="text" placeholder="Search..." name="search">
                     <button type="submit"  class="searching">
-                    <i class="fa fa-search"></i>
-                </button>
+                        <i class="fa fa-search"></i>
+                    </button>
+                </form>
             </section>
             <div id="sidemenu">
                 <div class="toggle-btn" onclick="toggleSidemenu()">
