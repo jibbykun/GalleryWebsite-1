@@ -138,7 +138,7 @@ body {
 footer {
   font-size: 15px;
   padding-left: 20px; 
-  padding-bottom: 20px;
+  padding-bottom: 5px;
   position: fixed;
   left: 0;
   bottom: 0;
@@ -146,6 +146,10 @@ footer {
   background-color: #f5f4f2;
   text-align: center;
  }
+
+.footerNav:hover{
+  color: blue;
+  text-decoration: underline;
 }
 
 h1 {
