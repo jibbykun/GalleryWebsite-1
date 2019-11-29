@@ -18,19 +18,10 @@ const nodemailer = require('nodemailer');
 /* custom modules */
 const User = require('./modules/user')
 const Account = require('./modules/account')
+const emailValidation = require('./modules/validEmail')
 
 const app = new Koa()
 const router = new Router()
-
-function emailvalidation(emailaddress) {
-	var pattern = /^(?:[\w\!\#\$\%\&\'\*\+\-\/\=\?\^\`\{\|\}\~]+\.)*[\w\!\#\$\%\&\'\*\+\-\/\=\?\^\`\{\|\}\~]+@(?:(?:(?:[a-zA-Z0-9](?:[a-zA-Z0-9\-](?!\.)){0,61}[a-zA-Z0-9]?\.)+[a-zA-Z0-9](?:[a-zA-Z0-9\-](?!$)){0,61}[a-zA-Z0-9]?)|(?:\[(?:(?:[01]?\d{1,2}|2[0-4]\d|25[0-5])\.){3}(?:[01]?\d{1,2}|2[0-4]\d|25[0-5])\]))$/;
-	if(!emailaddress.match(pattern)) {
-	  return false;
-	}
-	return true;
-  }
-
-
 
 app.keys = ['hidemyapp']
 app.use(staticDir('public'))
@@ -111,7 +102,7 @@ router.post('/changeEmail', async ctx => {
 		const body = ctx.request.body
 		const db = await Database.open(dbName)
 		/* Sever Side Email Validation */
-		if (emailvalidation(body.emailAddress) == true){
+		if (emailValidation.emailValidation(body.emailAddress) == true){
 			// Update the email in the db if successful
 			const sql = `UPDATE users  SET emailAddress =  "${body.emailAddress}" WHERE username="${ctx.session.user}";`
 			console.log(sql)
