@@ -16,11 +16,11 @@
     </head>
 
 <body id="body">
-    	{{#if successMsg}}
- 			<p class="msg-success">{{successMsg}}</p>
+    	{{#if data.successMsg}}
+ 			<p class="msg-success">{{data.successMsg}}</p>
 		{{/if}}
-        {{#if errorMsg}}
- 			<p class="msg-danger">{{errorMsg}}</p>
+        {{#if data.errorMsg}}
+ 			<p class="msg-danger">{{data.errorMsg}}</p>
 		{{/if}}
     <section class="container">
         <div class="header">
@@ -35,7 +35,7 @@
                 </div>
                 <ul>
                     <li> <a href="/">Home </a> </li>
-                    {{#if authorised}}
+                    {{#if data.authorised}}
                         <li> <a href="sell">Sell </a> </li>
                         <li> <a href="myItems">My Items </a> </li>
                         <li> <a href="account">Account </a> </li>
@@ -72,6 +72,10 @@
 </body>
 
 <footer> 
-
+    <p>Project for Coventry University | 2019 | This webpage was made by WebX team.</p>
+    <a href="/" class="footerNav">Home</a> |
+    <a href="about" class="footerNav">About</a> |
+    <a href="contact" class="footerNav">Contact</a>
+    <p>example@email.com | +44 7000000000</p>
 </footer>
 </html>

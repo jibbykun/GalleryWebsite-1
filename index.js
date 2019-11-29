@@ -15,6 +15,10 @@ const mime = require('mime-types')
 const watermark = require('image-watermark');
 const nodemailer = require('nodemailer');
 
+/* custom modules */
+const User = require('./modules/user')
+const Account = require('./modules/account')
+
 const app = new Koa()
 const router = new Router()
 
@@ -38,6 +42,9 @@ app.use(router.routes())
 const port = 8080
 const saltRounds = 10
 const dbName = 'gallerydb.db'
+
+let user
+let account
 
 router.get('/', async ctx => {
 	try {
@@ -83,16 +90,7 @@ router.get('/payment', async ctx =>{
 	await ctx.render('payment', data)
 })
 
-router.get('/register', async ctx => {
-	if(ctx.session.authorised == true) 
-		return ctx.redirect('/')
-	// Check for validation messages
-	const data = {}
-	if(ctx.query.errorMsg) data.errorMsg = ctx.query.errorMsg
-	if(ctx.query.successMsg) data.successMsg = ctx.query.successMsg
-	data.authorised = ctx.session.authorised
-	await ctx.render('register', data)
-})
+
 
 router.get('/changeEmail', async ctx => {
 	if(ctx.session.authorised !== true) 
@@ -241,6 +239,16 @@ router.post('/changePassword', async ctx => {
 	}  	
 })
 
+router.get('/register', async ctx => {
+	if(ctx.session.authorised == true) 
+		return ctx.redirect('/')
+	// Check for validation messages
+	const data = {}
+	if(ctx.query.errorMsg) data.errorMsg = ctx.query.errorMsg
+	if(ctx.query.successMsg) data.successMsg = ctx.query.successMsg
+	data.authorised = ctx.session.authorised
+	await ctx.render('register', data)
+})
 
 router.post('/register', async ctx => {
 	if(ctx.session.authorised == true) 
@@ -248,34 +256,16 @@ router.post('/register', async ctx => {
 	try {
 		console.log(ctx.request.body)
 		const body = ctx.request.body
-		const db = await Database.open(dbName)
-		// check if the password is at least 10 characters long
-		if (body.password.length < 10)
-			return ctx.redirect("/register?errorMsg=Password must be at least 10 characters")
-		// check if the password contains an uppercase character
-		if (!/[A-Z]/.test(body.password))
-			return ctx.redirect("/register?errorMsg=Password must contain at least one uppercase character")
-		// check if the password contains a number
-		if (!/\d/.test(body.password))
-			return ctx.redirect("/register?errorMsg=Password must contain at least one number")
-		// check if the passwords match
-		if (body.password != body.passwordRepeat)
-			return ctx.redirect("/register?errorMsg=Passwords do not match")
-		// Check if a user already exists with the same username
-		const records = await db.get(`SELECT count(userID) AS count FROM users WHERE username="${body.username}";`)
-		if(records.count) 
-			return ctx.redirect('/register?errorMsg=Username taken. Please try again.')
-		// encrypt the password
-		body.password = await bcrypt.hash(body.password, saltRounds)
-		// insert the user into the db - success!
-		const sql = `INSERT INTO users(username, password, profilePicture, paypalUsername, emailAddress) 
-			VALUES("${body.username}", "${body.password}", "pic_${body.username}", "${body.paypalUsername}", "${body.emailAddress}");`
-		console.log(sql)
-		await db.run(sql)
-		await db.close()
+
+		// call the functions in the module
+		user = await new User(dbName)
+		await user.register(body.username, body.password, body.passwordRepeat, body.paypalUsername, body.emailAddress)
+
 		ctx.redirect('/login?successMsg=You have successfully registered!')
 	} catch(err) {
-		ctx.body = err.message
+		return ctx.redirect(`/register?errorMsg=${err.message}`)
+	} finally {
+		user.tearDown()
 	}
 })
 
@@ -295,24 +285,18 @@ router.post('/login', async ctx => {
 		return ctx.redirect('/')
 	try {
 		const body = ctx.request.body
-		const db = await Database.open(dbName)
-		// check if the user exists
-		const records = await db.get(`SELECT count(userID) AS count FROM users WHERE username="${body.username}";`)
-		if(!records.count) 
-			return ctx.redirect('/login?errorMsg=User doesnt exist')
-		const record = await db.get(`SELECT password FROM users WHERE username = "${body.username}";`)
-		await db.close()
-		// check login credentials
-		const valid = await bcrypt.compare(body.password, record.password)
-		if(valid == false)
-			return ctx.redirect('/login?errorMsg=Incorrect password')
+
+		user = await new User(dbName)
+		await user.login(body.username, body.password)
 		// success
 		ctx.session.authorised = true
 		ctx.session.user = body.username
 		console.log(ctx.session.user)
 		return ctx.redirect('/?successMsg=You are now logged in...')
 	} catch(err) {
-		await ctx.render('error', {message: err.message})
+		return ctx.redirect(`/login?errorMsg=${err.message}`)
+	} finally {
+		user.tearDown()
 	}
 })
 
@@ -361,22 +345,16 @@ router.post('/uploadProfilePic', koaBody, async ctx => {
 		console.log(body)
 		// process the file
 		const {path, type} = ctx.request.files.profilePicture
-		const fileExtension = mime.extension(type)
-		console.log(`path: ${path}`)
-		console.log(`type: ${type}`)
-		console.log(`fileExtension: ${fileExtension}`)
-		//set the file directory dynamically to the user
-		const db = await Database.open(dbName)
-		// get the directory from the db
-		const record = await db.get(`SELECT profilePicture FROM users WHERE username = "${ctx.session.user}";`)
-		console.log(record)
-		await db.close()
-		const fileDir = 'public/ProfilePictures/' + record.profilePicture + '.png'
-		await fs.copy(path, fileDir)
+		
+		user = await new User(dbName)
+		await user.updateProfilePic(ctx.session.user, path, type)
+
 		// redirect to account page
 		ctx.redirect(`/account?successMsg=profile picture updated`)
 	} catch(err) {
-		await ctx.render('error', {message: err.message})
+		return ctx.redirect(`/uploadProfilePic?errorMsg=${err.message}`)
+	} finally {
+		user.tearDown()
 	}
 })
 
@@ -397,71 +375,16 @@ router.post('/uploadItem', koaBody, async ctx => {
 	try {
 		const body = ctx.request.body
 		console.log(body)
-		// check the number of images they attempted to upload - max 3
-		var count = ctx.request.files.image.length
-		if (count > 3)
-			return ctx.redirect("/sell?errorMsg=Max number of images 3")
-		// Run through a loop for how many images they uploaded
-		var dbDir = ["", "", ""];
-		if (count == null)
-		{
-			// Theres no length if only one image - but also check if there is actually at least one image
-			if (ctx.request.files.image == null)
-				return ctx.redirect("/sell?errorMsg=Please upload an image")
-			else
-			{
-				// process the file
-				const {path, type} = ctx.request.files.image
-				const fileExtension = mime.extension(type)
-				console.log(`path: ${path}`)
-				console.log(`type: ${type}`)
-				console.log(`fileExtension: ${fileExtension}`)
-				// get the current date for the filename, so it is unique
-				var time = new Date();
-				const dir = ctx.session.user + time.getFullYear().toString() + time.getMonth().toString() + time.getDay().toString() + time.getTime().toString() + 0
-				const fileDir = 'public/Items/item_' + dir + '.png'
-				console.log(fileDir)
-				await fs.copy(path, fileDir)
-				
-				
-				// Directory for image to go in db
-				dbDir[0] = 'Items/item_' + dir + '.png'
-			}
-		}
-		for (var i = 0; i < count; i++) {
-			// process the file
-			const {path, type} = ctx.request.files.image[i]
-			const fileExtension = mime.extension(type)
-			console.log(`path: ${path}`)
-			console.log(`type: ${type}`)
-			console.log(`fileExtension: ${fileExtension}`)
-			// get the current date for the filename, so it is unique
-			var time = new Date();
-			const dir = ctx.session.user + time.getFullYear().toString() + time.getMonth().toString() + time.getDay().toString() + time.getTime().toString() + i
-			const fileDir = 'public/Items/item_' + dir + '.png'
-			
-			console.log(fileDir)
-			await fs.copy(path, fileDir)
-			
-			// Directory for image to go in db
-			dbDir[i] = 'Items/item_' + dir + '.png'
-			
-		}
-		
-		// get the userID from the db
-		const db = await Database.open(dbName)
-		const record = await db.get(`SELECT userID FROM users WHERE username = "${ctx.session.user}";`)
-		console.log(record)
-
-		// insert the item into the db including the userID
-		await db.run(`INSERT INTO items(item, year, price, artist, medium, size, sDescription, lDescription, imageDir1, imageDir2, imageDir3, userID, status) VALUES("${body.item}", "${body.year}", "${body.price}", "${body.artist}", "${body.medium}", "${body.size}", "${body.sDescription}", "${body.lDescription}", "${dbDir[0]}", "${dbDir[1]}", "${dbDir[2]}", "${record.userID}", true)`)
-		await db.close()
+		console.log(ctx.session.user)
+		account = await new Account(dbName)
+		await account.uploadItem(ctx.request.files.image, ctx.session.user, body.item, body.year, body.price, body.artist, body.medium, body.size, body.sDescription, body.lDescription)
 
 		// redirect to my items page
 		ctx.redirect(`/myItems?successMsg=item uploaded successfully`)
 	} catch(err) {
-		console.log(err.message)
-		await ctx.render('error', {message: err.message})
+		return ctx.redirect(`/sell?errorMsg=${err.message}`)
+	} finally {
+		account.tearDown()
 	}
 })
 
@@ -475,6 +398,8 @@ router.get('/myItems', async ctx => {
 		const record = await db.get(`SELECT userID FROM users WHERE username = "${ctx.session.user}";`)
 		const item = await db.all(`SELECT * FROM items WHERE userID = "${record.userID}";`)
 		data.authorised = ctx.session.authorised
+		if(ctx.query.errorMsg) data.errorMsg = ctx.query.errorMsg
+		if(ctx.query.successMsg) data.successMsg = ctx.query.successMsg
 		await ctx.render('myItems', {items: item, data: data})
 	} catch(err) {
 		console.error(err.message)
@@ -582,51 +507,9 @@ router.post('/email', async ctx => {
 		return ctx.redirect('/login?errorMsg=you are not logged in')
 		try {
 			const body = ctx.request.body
-			const db = await Database.open(dbName)
-			const itemRecord = await db.get(`SELECT * FROM items WHERE itemID = ${body.itemID};`)
-			const sellerRecord = await db.get(`SELECT * FROM users WHERE userID = "${itemRecord.userID}";`)
-			const userRecord = await db.get(`SELECT * FROM users WHERE username = "${ctx.session.user}";`)
-			await db.close()
-	
-			const output = `
-			<p>Hi ${sellerRecord.username},</p>
-			<p>You have a new question about an item you are selling: ${itemRecord.item}</p>
-			<p>${userRecord.username} asks:</p>
-			<p>${body.message}</p>
-			<p>Thank you.</p>
-		  `;
-	
-		var transporter = nodemailer.createTransport({
-			host: "smtp-mail.outlook.com", // hostname
-			secureConnection: false, // TLS requires secureConnection to be false
-			port: 587, // port for secure SMTP
-			tls: {
-			   ciphers:'SSLv3'
-			},
-			auth: {
-				user: 'hooglywooglyboogly6969@outlook.com', // dont steal my acc!!!
-				pass: 'Supertester123'  // stop looking!!!
-			}
-		});
-		
-		  // setup email data with unicode symbols
-		  let mailOptions = {
-			  from: '"WebX Team" <hooglywooglyboogly6969@outlook.com>', // sender address
-			  to: `${sellerRecord.emailAddress}`, // list of receivers
-			  subject: 'New message about an item', // Subject line
-			  text: 'Hello world?', // plain text body
-			  html: output // html body
-		  };
-		
-		  // send mail with defined transport object
-		  transporter.sendMail(mailOptions, (error, info) => {
-			  if (error) {
-				  return console.log(error);
-			  }
-			  console.log('Message sent: %s', info.messageId);   
-			  console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
-			  
-		  });
+
+			account = await new Account(dbName)
+			await account.email(body.itemID, ctx.session.user, body.message)
 
 		  return ctx.redirect(`/${body.itemID}?successMsg=Message Sent...`);
 	
