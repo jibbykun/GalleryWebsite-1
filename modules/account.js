@@ -5,6 +5,7 @@ const fs = require('fs-extra')
 const mime = require('mime-types')
 const sqlite = require('sqlite-async')
 const nodemailer = require('nodemailer');
+const emailValidation = require('../modules/validEmail')
 
 module.exports = class Account {
 
@@ -135,6 +136,39 @@ module.exports = class Account {
 		}
 	}
 
+	async changeEmail(email, user)
+	{
+		try {
+			/* Server Side Email Validation */
+			if (!emailValidation.emailValidation(email))
+				throw new Error('Please enter your new email address in the correct format')
+			
+			await this.db.run(`UPDATE users  SET emailAddress =  "${email}" WHERE username="${user}";`)
+		}
+		catch(err){
+			throw err
+		}
+	}
+
+	async changeUsername(username, user)
+	{
+		try{
+			// Update the username in the db - success!
+			await this.db.run(`UPDATE users  SET username =  "${username}" WHERE username="${user}";`)
+		} catch(err){
+			throw err
+		}
+	}
+
+	async changePaypal(paypalUsername, user)
+	{
+		try{
+			// Update the username in the db - success!
+			await this.db.run(`UPDATE users  SET paypalUsername =  "${paypalUsername}" WHERE username="${user}";`)
+		} catch(err) {
+			throw err
+		}
+	}
 
 
 

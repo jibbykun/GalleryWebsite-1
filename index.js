@@ -96,21 +96,13 @@ router.post('/changeEmail', async ctx => {
 	try {
 		console.log(ctx.request.body)
 		const body = ctx.request.body
-		const db = await Database.open(dbName)
-		/* Sever Side Email Validation */
-		if (emailValidation.emailValidation(body.emailAddress) == true){
-			// Update the email in the db if successful
-			const sql = `UPDATE users  SET emailAddress =  "${body.emailAddress}" WHERE username="${ctx.session.user}";`
-			console.log(sql)
-			await db.run(sql)
-			await db.close()
-			ctx.redirect('/changeEmail?successMsg=You have successfully changed your email address!')
-		}
-		else{
-			ctx.redirect('/changeEmail?errorMsg=Wrong format. Server Side Error!')
-		}
-	} catch(err) {
-		ctx.body = err.message
+    account = await new Account(dbName)
+    console.log(ctx.session.user)
+    await account.changeEmail(body.emailAddress, ctx.session.user)
+
+		ctx.redirect('/changeEmail?successMsg=You have successfully changed your email address!')
+		} catch(err) {
+      return ctx.redirect(`/changeEmail?errorMsg=${err.message}`)
 	}  	
 
 })
@@ -130,12 +122,10 @@ router.post('/changePaypal', async ctx => {
   try {
     console.log(ctx.request.body)
     const body = ctx.request.body
-    const db = await Database.open(dbName)
-    // Update the username in the db - success!
-    const sql = `UPDATE users  SET paypalUsername =  "${body.paypalUsername}" WHERE username="${ctx.session.user}";`
-    console.log(sql)
-    await db.run(sql)
-    await db.close()
+    account = await new Account(dbName)
+    console.log(ctx.session.user)
+    await account.changePaypal(body.paypalUsername, ctx.session.user)
+
     ctx.redirect('/changePaypal?successMsg=You have successfully changed your Paypal Username!')
   } catch (err) {
     ctx.body = err.message
@@ -157,16 +147,12 @@ router.post('/changeUsername', async ctx => {
   try {
     console.log(ctx.request.body)
     const body = ctx.request.body
-    const db = await Database.open(dbName)
-    // Update the username in the db - success!
-    const sql = `UPDATE users  SET username =  "${body.username}" WHERE username="${ctx.session.user}";`
-    console.log(sql)
-    await db.run(sql)
-    await db.close()
+    account = await new Account(dbName)
+    console.log(ctx.session.user)
+    await account.changeUsername(body.username, ctx.session.user)
     // Make them log back into their accounts
     ctx.session.authorised = null
     ctx.session.user = null
-    console.log(ctx.session.authorised)
     ctx.redirect('/login?successMsg=You have changed your username now log back in')
   } catch (err) {
     ctx.body = err.message

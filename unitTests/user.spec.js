@@ -2,76 +2,75 @@
 'use strict'
 
 const User = require('../modules/user.js')
-const Account = require('../modules/account.js')
 
 describe('register()', () => {
-
-	test('register a valid account', async done => {
+	test('valid account', async done => {
 		expect.assertions(1)
 		const user = await new User()
 		const register = await user.register('Testing', 'Supertester123', 'Supertester123', 'Tester', 'test@hotmail.com')
 		expect(register).toBe(true)
 		done()
-	})
-
-	test('register a duplicate username', async done => {
+	});
+	test('duplicate username', async done => {
 		expect.assertions(1)
 		const user = await new User()
-		const register = await user.register('Testing', 'Supertester123', 'Supertester123', 'Tester', 'test@hotmail.com')
+		await user.register('Testing', 'Supertester123', 'Supertester123', 'Tester', 'test@hotmail.com')
 		await expect( user.register('Testing', 'Supertester123', 'Supertester123', 'Tester', 'test@hotmail.com') )
 			.rejects.toEqual( Error('Username taken. Please try again.') )
 		done()
-	})
-
-	test('error if blank username', async done => {
+	});
+	test('password too short', async done => {
 		expect.assertions(1)
 		const user = await new User()
-		await expect( user.register('', 'password') )
-			.rejects.toEqual( Error('missing username') )
+		await expect( user.register('Testing', 'Super', 'Super', 'Tester', 'test@hotmail.com') )
+			.rejects.toEqual( Error('Password must be at least 10 characters') )
 		done()
-	})
+	});
 
-	test('error if blank password', async done => {
+	test('password no number', async done => {
 		expect.assertions(1)
 		const user = await new User()
-		await expect( user.register('doej', '') )
-			.rejects.toEqual( Error('missing password') )
+		await expect( user.register('Testing', 'Supertester', 'Supertester', 'Tester', 'test@hotmail.com') )
+			.rejects.toEqual( Error('Password must contain at least one number') )
 		done()
-	})
-
-})
-
-describe('uploadPicture()', () => {
-	// this would have to be done by mocking the file system
-	// perhaps using mock-fs?
-})
+	});
+	test('passwords do not match', async done => {
+		expect.assertions(1)
+		const user = await new User()
+		await expect( user.register('Testing', 'Supertester123', 'Supertester', 'Tester', 'test@hotmail.com') )
+			.rejects.toEqual( Error('Passwords do not match') )
+		done()
+	});
+});
 
 describe('login()', () => {
-	test('log in with valid credentials', async done => {
+	test('valid login', async done => {
 		expect.assertions(1)
 		const user = await new User()
-		await user.register('doej', 'password')
-		const valid = await user.login('doej', 'password')
-		expect(valid).toBe(true)
+		await user.register('Testing', 'Supertester123', 'Supertester123', 'Tester', 'test@hotmail.com')
+		const login = await user.login('Testing', 'Supertester123')
+		expect(login).toBe(true)
 		done()
-	})
-
-	test('invalid username', async done => {
+	});
+	test('incorrect username', async done => {
 		expect.assertions(1)
 		const user = await new User()
-		await user.register('doej', 'password')
-		await expect( user.login('roej', 'password') )
-			.rejects.toEqual( Error('username "roej" not found') )
+		await user.register('Testing', 'Supertester123', 'Supertester123', 'Tester', 'test@hotmail.com')
+		await expect( user.login('Testing1', 'Supertester123') )
+			.rejects.toEqual( Error('User doesnt exist') )
 		done()
-	})
-
-	test('invalid password', async done => {
+	});
+	test('correct username wrong password', async done => {
 		expect.assertions(1)
 		const user = await new User()
-		await user.register('doej', 'password')
-		await expect( user.login('doej', 'bad') )
-			.rejects.toEqual( Error('invalid password for account "doej"') )
+		await user.register('Testing', 'Supertester123', 'Supertester123', 'Tester', 'test@hotmail.com')
+		await expect( user.login('Testing', 'Supertester1234') )
+			.rejects.toEqual( Error('Incorrect password') )
 		done()
-	})
+	});
+});
 
-})
+//describe('updateProfilePic()', () => {
+	//mock-fs
+//});
+
