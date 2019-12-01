@@ -144,6 +144,7 @@ module.exports = class Account {
 				throw new Error('Please enter your new email address in the correct format')
 			
 			await this.db.run(`UPDATE users  SET emailAddress =  "${email}" WHERE username="${user}";`)
+			return true;
 		}
 		catch(err){
 			throw err
