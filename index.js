@@ -73,6 +73,7 @@ router.get('/contact', async ctx => {
   const data = {}
   data.authorised = ctx.session.authorised
   await ctx.render('contact', data)
+})
 router.get('/receipt', async ctx => {
 	const data = ctx.request.body
 	data.authorised = ctx.session.authorised
@@ -588,13 +589,3 @@ module.exports = app.listen(port, async() => {
 	await db.close()
 	console.log(`listening on port ${port}`)
 })
-
-/*
-var options = {
-'text' : 'sample watermark',
-'resize' : '100%',
-'override-image' : true
-};
-watermark.embedWatermark('public/Items/item_aaa201910115740942361890.png', options);
-
-*/
