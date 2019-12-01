@@ -55,51 +55,34 @@
     
         
         <div class="profilepictureframe">
-            <p>Current Profile Picture</p>
-            <hr>
-            </br>
-            </br>
-            </br>
-            <a target="_blank" href="{{picDir}}">
+            <p class = "underlinespace30">Current Profile Picture</p>
+            
+            <a  target="_blank" href="{{picDir}}">
                 <img src="{{picDir}}" alt="No profile picture" width="600" height="400" class = "profilepicture" >
             </a>
-            </br>
-            </br>
-            </br>
             <hr>
             <a href="profilePic">Update your profile picture</a>
         </div>
 
         <div class="accountleftframe">
 
-            <h2> Username </h2> 
-            <hr>
-            <br>
-            <h3> {{usName}} </h3>
+            <h2 class = "underlinespace30"> Username </h2> 
+            <h3 class = "spaceunderneath20"> {{usName}} </h3>
+            <h2 class = "underlinespace30"> Settings </h2>
+
+            <ul style="list-style-type:square;">
+
+                <a href="changePassword"  > <li class = "spaceunderneath10">Change your current password</li> </a> 
+                
+                <a href="changeEmail" > <li class = "spaceunderneath10">Change your Email Address</li> </a>
             
-            </br>
-            </br>
-            <h2> Settings </h2>
-            <br>
-            <a href="changePassword">Change your current password</a>
-            <hr>
-            </br>
-            <a href="changeEmail">Change your Email Address</a>
-            <hr>
-            </br>
-            <a href="changeUsername">Change your Username</a>
-            <hr>
-            </br>
-            <a href="changePaypal">Change your PayPal username</a>
-            <hr>
-            <br>
-        
+                <a href="changeUsername"> <li class = "spaceunderneath10">Change your Username</li> </a>
+                
+                <a href="changePaypal"> <li class = "spaceunderneath10">Change your PayPal username</li> </a>
+
+            </ul>
+
         </div>
-
-
-
-
-
         
     </section>
 </body>
