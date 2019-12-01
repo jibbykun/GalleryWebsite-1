@@ -5,84 +5,49 @@
         <meta charset="UTF-8", content="width=device-width, initial-scale=1">
         <title>Checkout</title><html>
         <link rel="stylesheet" type="text/css" href="style.css">
-        <script type="text/javascript">
-            function toggleSidemenu(){ 
-                document.getElementById("sidemenu").classList.toggle('active')
-                if (document.getElementById("sidemenu").classList == 'active')
-                    document.getElementById("body").style.marginLeft = "200px";
-                else
-                    document.getElementById("body").style.marginLeft = "5px";
-            }
-        </script>
     </head>
 
 <body id="body">
-
-    	{{#if successMsg}}
- 			<p class="msg-success">{{successMsg}}</p>
-		{{/if}}
-        {{#if errorMsg}}
- 			<p class="msg-danger">{{errorMsg}}</p>
-		{{/if}}
     <section class="container">
-        <div class="header">
-            <a href="/" class="header_logo center"><button><img src="WebxLogo.png"/></button></a>
-            <div id="sidemenu">
-                <div class="toggle-btn" onclick="toggleSidemenu()">
-                    <a>
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                    </a>
-                </div>
-                <ul>
-                    <li> <a href="/">Home </a> </li>
-                    {{#if authorised}}
-                        <li> <a href="sell">Sell </a> </li>
-                        <li> <a href="myItems">My Items </a> </li>
-                        <li> <a href="account">Account </a> </li>
-                        <li> <a href="logout">Logout </a> </li> 
-                    {{else}}
-                        <li> <a href="login">Login </a></li> 
-                        <li> <a href="register">Sign Up </a></li> 
-                    {{/if}}
-                    <li> <a href="about">About </a> </li> 
-                    <li> <a href="contact">Contact </a></li>
-                </ul>
-            </div>
-        </div>
-        <h1>You sent a payment of £{{data.total}} to {{userID}}</h1>
-        <table>
-            <tr>
-                <th><p>Item name</p></th>
-                <th><p>Unit price</p></th>
-                <th><p>Quantity</p></th>
-                <th><p>Amout</p></th>
-            </tr>
-            {{#each items}}
-                <tr>
-                    <td><p>{{item}}</p></td>
-                    <td><p>£{{price}}</p></td>
-                    <td><p>1</p></td>
-                    <td><p>£{{price}}</p></td>
-                </tr>
-            {{/each}}
-
-        </table>
-
-
+        <section class="checkout">
+            <a href="/"><h2>WebX Gallery Limited</h2></a>
+            <section class="checkout_logo">
+            <img class="checkout_logo-img float-left" src="WebxLogo.png"/>
+            <p class="float-right">£{{data.total}} GBP</p>
+            </section>
+            <section class="checkout-username"><p>Hi {{user.paypalUsername}},</p></section>
+            <h2>Send to</h2>
+            <form class="checkout_form" action="/receipt" method="POST">
+                <p>Full Name:*<br /><input id="checkout_form-name" type="text" name="fullname" value="" placeholder="" required></p>
+                <p>Address line 1:*<br /><input id="checkout_form-address1" type="text" name="addressline1" value="" placeholder="" required></p>
+                <p>Address line 2:<br /><input id="checkout_form-address2" type="text" name="addressline2" value="" placeholder=""></p>
+                <p>City:*<br /><input id="checkout_form-city" type="text" name="city"  value="" required></p>
+                <p>Post Code:*<br /><input id="checkout_form-postcode" type="text" name="postcode"  value="" placeholder="" required></p>
+                <section class="checkout_form-paywith">
+                    <h2>Pay with</h2>
+                    <p class="float-left"><input id="checkout_form-postcode" type="radio" checked>PayPal balance</p>
+                    <p class="float-right">£{{data.total}} GBP</p>
+                </section>
+                <p>View <span class="checkout_form-bluetext">PayPal policies</span> and your funding source rights.</p>
+                <input id="checkout_form-btn" type="submit" value="Continue">
+		    </form>
+            <p>You'll be able to review your order before you complete your purchase.</p>
+        </section>
 
     </section>
 </body>
+<<<<<<< Updated upstream
 
-<footer> </footer>
+<footer> 
+    <p>Project for Coventry University | 2019 | This webpage was made by WebX team. &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160;  &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160;  &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160;  <a href="/" class="footerNav">Home</a> &#160; &#160; &#160; &#160; <a href="about" class="footerNav">About</a> &#160; &#160; &#160; &#160;   <a href="contact" class="footerNav">Contact</a> &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160;  &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160;  &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160;  &#160; &#160; &#160; &#160; &#160; &#160;  &#160; &#160; &#160;  &#160; &#160; &#160; <a href="contact" class="footerNav">Contact example@email.com | +44 7000000000</a> </p>
+</footer> 
+=======
+>>>>>>> Stashed changes
 <script>
-    const checkoutBtn = document.getElementById("basket_right-open")
-    const form = document.getElementsByClassName("disabled checkout_form")[0]
+    const checkoutBtn = document.getElementById("checkout_form-btn")
 
     checkoutBtn.addEventListener('click', e => {
-        form.classList.remove("disabled")
-        checkoutBtn.classList.add("disabled")
+        //label item as sold
     })
 </script>
 </html>

@@ -36,18 +36,19 @@
                     </a>
                 </div>
                 <ul>
-                    <li> <a href="/">Home </a> </li>
-                    {{#if authorised}}
-                        <li> <a href="sell">Sell </a> </li>
-                        <li> <a href="myItems">My Items </a> </li>
-                        <li> <a href="account">Account </a> </li>
-                        <li> <a href="logout">Logout </a> </li> 
+                    <a href="/"><li> Home  </li></a>
+                    {{#if data.authorised}}
+                        <a href="basket"><li> Basket</li></a>
+                        <a href="sell"><li> Sell </li></a>
+                        <a href="myItems"><li> My Items </li></a>
+                        <a href="account"><li> Account </li></a>
+                        <a href="logout"><li> Logout </li></a>
                     {{else}}
-                        <li> <a href="login">Login </a></li> 
-                        <li> <a href="register">Sign Up </a></li> 
+                        <a href="login"><li> Login </li></a>
+                        <a href="register"><li> Sign Up </li></a>
                     {{/if}}
-                    <li> <a href="about">About </a> </li> 
-                    <li> <a href="contact">Contact </a></li>
+                    <a href="about"><li> About </li></a>
+                    <a href="contact"><li> Contact </li></a>
                 </ul>
             </div>
         </div>
@@ -55,8 +56,6 @@
 </body>
 
 <footer> 
-    <br>
-    <br>
-    <a href="http://localhost:8080">Click here to go Home</a>
-</footer>
+    <p>Project for Coventry University | 2019 | This webpage was made by WebX team. &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160;  &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160;  &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160;  <a href="/" class="footerNav">Home</a> &#160; &#160; &#160; &#160; <a href="about" class="footerNav">About</a> &#160; &#160; &#160; &#160;   <a href="contact" class="footerNav">Contact</a> &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160;  &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160;  &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160;  &#160; &#160; &#160; &#160; &#160; &#160;  &#160; &#160; &#160;  &#160; &#160; &#160; <a href="contact" class="footerNav">Contact example@email.com | +44 7000000000</a> </p>
+</footer> 
 </html>

@@ -34,36 +34,38 @@
                     </a>
                 </div>
                 <ul>
-                    {{#if authorised}}
-                        <li> <a href="sell">Sell </a> </li>
-                        <li> <a href="myItems">My Items </a> </li>
-                        <li> <a href="account">Account </a> </li>
-                        <li> <a href="logout">Logout </a> </li> 
+                    <a href="/"><li> Home  </li></a>
+                    {{#if data.authorised}}
+                        <a href="basket"><li> Basket</li></a>
+                        <a href="sell"><li> Sell </li></a>
+                        <a href="myItems"><li> My Items </li></a>
+                        <a href="account"><li> Account </li></a>
+                        <a href="logout"><li> Logout </li></a>
                     {{else}}
-                        <li> <a href="login">Login </a></li> 
-                        <li> <a href="register">Sign Up </a></li> 
+                        <a href="login"><li> Login </li></a>
+                        <a href="register"><li> Sign Up </li></a>
                     {{/if}}
-                    <li> <a href="about">About </a> </li> 
-                    <li> <a href="contact">Contact </a></li>
+                    <a href="about"><li> About </li></a>
+                    <a href="contact"><li> Contact </li></a>
                 </ul>
             </div>
         </div>
 
         <div class="detail_top">
-            <h1>{{item}} ({{year}})</h1>
+            <h1>{{record.item}} ({{record.year}}) <span id="detail_top-status">{{record.status}}</span></h1>
             <div class="detail_image_previews"></div>
             <div class="detail_image_main">
-                <a id="detail_image_main-a" href="{{imageDir1}}"><img id="detail_image_main-id" src="{{imageDir1}}" alt="No picture found"/></a>
+                <a id="detail_image_main-a" href="{{record.imageDir1}}"><img id="detail_image_main-id" src="{{record.imageDir1}}" alt="No picture found"/></a>
             </div>
             <div class="detail_description">
-                <p>{{sDescription}}</p>
-                <p>Price: £{{price}}</p>
-                <p>Artist: {{artist}}</p>
-                <p>Medium: {{medium}}</p>
-                <p>Size: {{size}}</p>
-                <p>Reference: #{{itemID}}</p>
-                <a href="/buy/{{itemID}}"><button id="detail_description-buyitnow"><h3>Buy it Now</h3></button></a>
-                <a href="/{{itemID}}/add-to-basket"><button id="detail_description-addtobasket"><h3>Add to basket</h3></button></a>
+                <p>{{record.sDescription}}</p>
+                <p>Price: £{{record.price}}</p>
+                <p>Artist: {{record.artist}}</p>
+                <p>Medium: {{record.medium}}</p>
+                <p>Size: {{record.size}}</p>
+                <p>Reference: #{{record.itemID}}</p>
+                <a href="/buy/{{record.itemID}}"><button id="detail_description-buyitnow"><h3>Buy it Now</h3></button></a>
+                <a href="/{{record.itemID}}/add-to-basket"><button id="detail_description-addtobasket"><h3>Add to basket</h3></button></a>
                 <button id="detail_description-favourite"><h3>Favourite</h3></button>
             </div>
         </div>
@@ -71,16 +73,16 @@
         <div class="detail_bottom">
             <div class="detail_more_description">
                 <h3>Description</h3>
-                <p>{{lDescription}}</p>
+                <p>{{record.lDescription}}</p>
             </div>
             <div class="detail_seller">
                 <h3>Seller Details</h3>
-                <p>Username: {{username}}</p>
+                <p>Username: {{record.username}}</p>
                 <p>Current Profile Picture</p>
-                <a target="_blank" href="{{picDir}}">
-                    <img src="{{picDir}}" alt="No profile picture" width="600" height="400">
+                <a target="_blank" href="{{record.picDir}}">
+                    <img src="{{record.picDir}}" alt="No profile picture" width="600" height="400">
                 </a>
-                <a href="/contactSeller/{{itemID}}"><button id="detail_seller-contact"><h3>Contact</h3></button></a>
+                <a href="/contactSeller/{{record.itemID}}"><button id="detail_seller-contact"><h3>Contact</h3></button></a>
             </div>
         </div>
 
@@ -95,7 +97,7 @@
     const mainPicLink = document.getElementById("detail_image_main-a")
     const previewPicParent = document.getElementsByClassName("detail_image_previews")[0]
     const previewPics = previewPicParent.children
-    const previews = ["{{imageDir1}}", "{{imageDir2}}", "{{imageDir3}}", "{{imageDir4}}", "{{imageDir5}}"]
+    const previews = ["{{record.imageDir1}}", "{{record.imageDir2}}", "{{record.imageDir3}}", "{{record.imageDir4}}", "{{record.imageDir5}}"]
 
     //Load preview images
     for(let i = 0; i < previews.length; i++){
@@ -120,5 +122,22 @@
             previewPics[i].classList.remove("inactive")
         })
     }
+    //label item as sold if it is sold
+    const statuslabel = document.getElementById("detail_top-status")
+    const buttons = [document.getElementById("detail_description-buyitnow"), document.getElementById("detail_description-addtobasket"), document.getElementById("detail_description-favourite")]
+    if(statuslabel.innerHTML == "0"){
+        statuslabel.innerHTML = "- Item is sold"
+        for(let i = 0; i < buttons.length; i++){
+            buttons[i].classList.add('disabled')
+        }
+    }
+    else{
+        statuslabel.innerHTML = ""
+    }
 </script>
+
+<footer> 
+    <p>Project for Coventry University | 2019 | This webpage was made by WebX team. &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160;  &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160;  &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160;  <a href="/" class="footerNav">Home</a> &#160; &#160; &#160; &#160; <a href="about" class="footerNav">About</a> &#160; &#160; &#160; &#160;   <a href="contact" class="footerNav">Contact</a> &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160;  &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160;  &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160;  &#160; &#160; &#160; &#160; &#160; &#160;  &#160; &#160; &#160;  &#160; &#160; &#160; <a href="contact" class="footerNav">Contact example@email.com | +44 7000000000</a> </p>
+</footer> 
+
 </html>
