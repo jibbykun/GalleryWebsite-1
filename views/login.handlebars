@@ -74,6 +74,16 @@
 </body>
 
 <footer> 
-    <p>Project for Coventry University | 2019 | This webpage was made by WebX team. &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160;  &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160;  &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160;  <a href="/" class="footerNav">Home</a> &#160; &#160; &#160; &#160; <a href="about" class="footerNav">About</a> &#160; &#160; &#160; &#160;   <a href="contact" class="footerNav">Contact</a> &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160;  &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160;  &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160;  &#160; &#160; &#160; &#160; &#160; &#160;  &#160; &#160; &#160;  &#160; &#160; &#160; <a href="contact" class="footerNav">Contact example@email.com | +44 7000000000</a> </p>
+    <section class="footer-left"><p>Project for Coventry University | 2019 | This webpage was made by WebX team.</p></section>
+    <section class="footer-center"><a href="/" class="footerNav"><p>Home </a><a href="about" class="footerNav">About </a><a href="contact" class="footerNav">Contact </p></a></section>
+    <section class="footer-right"><p>Contact: <a href="contact" class="footerNav">example@email.com</a> | +44 7000000000</p></section>
 </footer> 
+<script type="text/javascript">
+    //Put footer at the bottom of the window if page is too short
+    const bodyHeight = document.querySelector("body").offsetHeight
+    const footer = document.querySelector("footer")
+    if(bodyHeight < window.innerHeight){
+        footer.classList.add("bottom")
+    }
+</script>
 </html>

@@ -56,7 +56,7 @@
         <div class="basket_left">
             {{#each items}}
                 <div class="basket_left-item">
-                    <h3 class="center">Shipped and sold by {{userID}}</h3>
+
                     <a href="/{{itemID}}"><img src="{{imageDir1}}" alt="No picture found" width="600" height="400"></a>
                         <div class="basket_left-item-description">
                             <a href="/{{itemID}}"><h3 id="basket_left-item-description-title">{{item}} ({{year}})</h3></a> <h3 id="basket_left-item-description-price">£{{price}}</h3>
@@ -65,9 +65,7 @@
                             <p>{{medium}}</p>
                             <p>{{size}}</p>
                             <p>#{{itemID}}</p>
-                            <h3 id="basket_left-item-description-remove">Remove</h3>
                         </div>
-                        <hr>
                 </div>
             {{/each}}
         </div>
@@ -80,8 +78,17 @@
 
     </section>
 </body>
-
-<footer> </footer>
-<script>
+<footer> 
+    <section class="footer-left"><p>Project for Coventry University | 2019 | This webpage was made by WebX team.</p></section>
+    <section class="footer-center"><a href="/" class="footerNav"><p>Home </a><a href="about" class="footerNav">About </a><a href="contact" class="footerNav">Contact </p></a></section>
+    <section class="footer-right"><p>Contact: <a href="contact" class="footerNav">example@email.com</a> | +44 7000000000</p></section>
+</footer> 
+<script type="text/javascript">
+    //Put footer at the bottom of the window if page is too short
+    const bodyHeight = document.querySelector("body").offsetHeight
+    const footer = document.querySelector("footer")
+    if(bodyHeight < window.innerHeight){
+        footer.classList.add("bottom")
+    }
 </script>
 </html>

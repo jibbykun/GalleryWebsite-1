@@ -52,7 +52,7 @@
         </div>
 
         <div class="detail_top">
-            <h1>{{record.item}} ({{record.year}}) <span id="detail_top-status">{{record.status}}</span></h1>
+            <h1 class="center">{{record.item}} ({{record.year}}) <span id="detail_top-status">{{record.status}}</span></h1>
             <div class="detail_image_previews"></div>
             <div class="detail_image_main">
                 <a id="detail_image_main-a" href="{{record.imageDir1}}"><img id="detail_image_main-id" src="{{record.imageDir1}}" alt="No picture found"/></a>
@@ -90,8 +90,10 @@
 </body>
 
 <footer> 
-
-</footer>
+    <section class="footer-left"><p>Project for Coventry University | 2019 | This webpage was made by WebX team.</p></section>
+    <section class="footer-center"><a href="/" class="footerNav"><p>Home </a><a href="about" class="footerNav">About </a><a href="contact" class="footerNav">Contact </p></a></section>
+    <section class="footer-right"><p>Contact: <a href="contact" class="footerNav">example@email.com</a> | +44 7000000000</p></section>
+</footer> 
 <script>
     const mainPic = document.getElementById("detail_image_main-id")
     const mainPicLink = document.getElementById("detail_image_main-a")
@@ -134,10 +136,12 @@
     else{
         statuslabel.innerHTML = ""
     }
+    //Put footer at the bottom of the window if page is too short
+    const bodyHeight = document.querySelector("body").offsetHeight
+    const footer = document.querySelector("footer")
+    if(bodyHeight < window.innerHeight){
+        footer.classList.add("bottom")
+    }
 </script>
-
-<footer> 
-    <p>Project for Coventry University | 2019 | This webpage was made by WebX team. &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160;  &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160;  &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160;  <a href="/" class="footerNav">Home</a> &#160; &#160; &#160; &#160; <a href="about" class="footerNav">About</a> &#160; &#160; &#160; &#160;   <a href="contact" class="footerNav">Contact</a> &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160;  &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160;  &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160;  &#160; &#160; &#160; &#160; &#160; &#160;  &#160; &#160; &#160;  &#160; &#160; &#160; <a href="contact" class="footerNav">Contact example@email.com | +44 7000000000</a> </p>
-</footer> 
 
 </html>

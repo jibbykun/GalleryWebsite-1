@@ -87,7 +87,7 @@ router.post('/receipt', async ctx => {
 		const user = await db.get(`SELECT * FROM users WHERE username = "${ctx.session.user}";`)
 		const basket = await db.get(`SELECT itemID FROM basket WHERE userID = "${user.userID}";`)
 		//Mark item as sold NOT WORKING
-		await db.run(`UPDATE items SET status = false WHERE itemID = "${basket}"; `)
+		await db.run(`UPDATE items SET status = false WHERE itemID = "${basket['itemID']}"; `)
 		await db.run(`DELETE FROM basket WHERE userID="${user.userID}";`)
 		//Item is sold, send email to seller
 		ctx.redirect(`/receipt?successMsg=Thank you for your purchase!`)
@@ -110,7 +110,7 @@ router.get('/basket', async ctx =>{
 	let items = {}
 	let total = 0
 	for(var i = 0; i < basket.length; i++){
-		items = await db.all(`SELECT * FROM items WHERE itemID = "${basket[i].itemID}";`)
+		items = await db.all(`SELECT * FROM items INNER JOIN basket ON basket.itemID=items.itemID WHERE basket.userID = "${user.userID}";`)
 		total += parseInt(items[i].price)
 	}
 	data.total = total
@@ -134,7 +134,7 @@ router.get('/checkout', async ctx =>{
 	let total = 0
 	for(var i = 0; i < basket.length; i++){
 		//use join function for joining queries
-		items = await db.all(`SELECT * FROM items WHERE itemID = "${basket[i].itemID}";`)
+		items = await db.all(`SELECT * FROM items INNER JOIN basket ON basket.itemID=items.itemID WHERE basket.userID = "${user.userID}";`)
 		total += parseInt(items[i].price)
 	}
 	data.total = total
@@ -475,10 +475,11 @@ router.get('/:id/add-to-basket', async ctx => {
 		if (itemUser.username === ctx.session.user) 
 			return ctx.redirect(`/${ctx.params.id}?errorMsg=Seller cannot buy their own item`)
 		const user = await db.get(`SELECT * FROM users WHERE username = "${ctx.session.user}";`)
-		if(await db.get(`SELECT * FROM basket WHERE userID = "${ctx.params.id}" AND itemID = "${ctx.params.id}";`).count){
+		const basketLength = await db.get(`SELECT COUNT(*) FROM basket WHERE userID = "${user.userID}" AND itemID = "${ctx.params.id}";`)
+		if(basketLength['COUNT(*)'] > 0){
 			return ctx.redirect(`/${ctx.params.id}?errorMsg=Item already in your basket`)
 		}
-		await db.run(`DELETE FROM basket WHERE userID="${user.userID}";`)
+		//await db.run(`DELETE FROM basket WHERE userID="${user.userID}";`)
 		await db.run(`INSERT INTO basket(userID, itemID) VALUES("${user.userID}", "${ctx.params.id}")`)
 		ctx.redirect(`/${record.itemID}`)
 	} catch(err) {

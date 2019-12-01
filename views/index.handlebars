@@ -25,7 +25,7 @@
  			<p class="msg-danger">{{data.errorMsg}}</p>
 		{{/if}}
     <section class="container">
-        <div class="header">
+        <section class="header">
             <a href="/" class="header_logo center"><button><img src="WebxLogo.png"/></button></a>
             <section class="search-container" autocomplete="on">
                 <form action="/search" method="POST">
@@ -35,14 +35,14 @@
                     </button>
                 </form>
             </section>
-            <div id="sidemenu">
-                <div class="toggle-btn" onclick="toggleSidemenu()">
+            <section id="sidemenu">
+                <section class="toggle-btn" onclick="toggleSidemenu()">
                     <a>
                         <span></span>
                         <span></span>
                         <span></span>
                     </a>
-                </div>
+                </section>
                 <ul>
                     <a href="/"><li> Home  </li></a>
                     {{#if data.authorised}}
@@ -58,21 +58,42 @@
                     <a href="about"><li> About </li></a>
                     <a href="contact"><li> Contact </li></a>
                 </ul>
-        </div>
-        <div class="gallery">
+        </section>
+        <section class="gallery">
             {{#each items}}
-                <div class="gallery-item">
+                <section class="gallery-item">
                     <a href="/{{itemID}}">
                         <img src="{{imageDir1}}" alt="No picture found" width="600" height="400">
-                        <div class="gallery-item-description"><h3>{{item}}</h3> <p>£{{price}}</p></div>
+                        <section class="gallery-item-description"><h3>{{item}}</h3> <p>£{{price}}</p><p class="gallery-item-status">{{status}}</p></section>
                     </a>
-                </div>
+                </section>
             {{/each}}
-        </div>
+        </section>
     </section>
 </body>
-
 <footer> 
-    <p>Project for Coventry University | 2019 | This webpage was made by WebX team. &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160;  &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160;  &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160;  <a href="/" class="footerNav">Home</a> &#160; &#160; &#160; &#160; <a href="about" class="footerNav">About</a> &#160; &#160; &#160; &#160;   <a href="contact" class="footerNav">Contact</a> &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160;  &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160;  &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160;  &#160; &#160; &#160; &#160; &#160; &#160;  &#160; &#160; &#160;  &#160; &#160; &#160; <a href="contact" class="footerNav">Contact example@email.com | +44 7000000000</a> </p>
+    <section class="footer-left"><p>Project for Coventry University | 2019 | This webpage was made by WebX team.</p></section>
+    <section class="footer-center"><a href="/" class="footerNav"><p>Home </a><a href="about" class="footerNav">About </a><a href="contact" class="footerNav">Contact </p></a></section>
+    <section class="footer-right"><p>Contact: <a href="contact" class="footerNav">example@email.com</a> | +44 7000000000</p></section>
 </footer> 
+
+<script type="text/javascript">
+    //Put footer at the bottom of the window if page is too short
+    const bodyHeight = document.querySelector("body").offsetHeight
+    const footer = document.querySelector("footer")
+    if(bodyHeight < window.innerHeight){
+        footer.classList.add("bottom")
+    }
+    //Label item as sold if it is sold
+    const itemStatus = document.getElementsByClassName("gallery-item-status")
+    for(let i = 0; i < itemStatus.length; i++){
+        if(itemStatus[i].innerHTML == "0"){
+            itemStatus[i].innerHTML = "Sold"
+        }
+        else{
+            itemStatus[i].classList.add("disabled")
+        }
+    }
+
+</script>
 </html>
