@@ -16,11 +16,11 @@
     </head>
 
 <body id="body">
-    	{{#if successMsg}}
- 			<p class="msg-success">{{successMsg}}</p>
+    	{{#if data.successMsg}}
+ 			<p class="msg-success">{{data.successMsg}}</p>
 		{{/if}}
-        {{#if errorMsg}}
- 			<p class="msg-danger">{{errorMsg}}</p>
+        {{#if data.errorMsg}}
+ 			<p class="msg-danger">{{data.errorMsg}}</p>
 		{{/if}}
     <section class="container">
         <div class="header">
@@ -66,7 +66,11 @@
                 <p>Reference: #{{record.itemID}}</p>
                 <a href="/buy/{{record.itemID}}"><button id="detail_description-buyitnow"><h3>Buy it Now</h3></button></a>
                 <a href="/{{record.itemID}}/add-to-basket"><button id="detail_description-addtobasket"><h3>Add to basket</h3></button></a>
-                <button id="detail_description-favourite"><h3>Favourite</h3></button>
+                {{#if data.favourited}}
+                <a href="/favourite/{{record.itemID}}"><button id="detail_description-favourite"><h3>Remove from favourites</h3></button></a>
+                {{else}}
+                <a href="/favourite/{{record.itemID}}"><button id="detail_description-favourite"><h3>Add to favourites</h3></button></a>
+                {{/if}}
             </div>
         </div>
 
