@@ -80,16 +80,19 @@ router.get('/receipt', async ctx => {
 	await ctx.render('receipt', data)
 })
 router.post('/receipt', async ctx => {
+  // Check if the user is logged in - or send them back to the login page
 	if(ctx.session.authorised !== true) 
 		return ctx.redirect('/login?errorMsg=you are not logged in')
 	try {
+    //Get data from db
 		const db = await Database.open(dbName)
 		const user = await db.get(`SELECT * FROM users WHERE username = "${ctx.session.user}";`)
 		const basket = await db.get(`SELECT itemID FROM basket WHERE userID = "${user.userID}";`)
-		//Mark item as sold NOT WORKING
+		//Mark item as sold
 		await db.run(`UPDATE items SET status = false WHERE itemID = "${basket['itemID']}"; `)
 		await db.run(`DELETE FROM basket WHERE userID="${user.userID}";`)
-		//Item is sold, send email to seller
+    //Item is sold, send email to seller
+    
 		ctx.redirect(`/receipt?successMsg=Thank you for your purchase!`)
 	} catch(err) {
 		console.log(err.message)
@@ -99,16 +102,18 @@ router.post('/receipt', async ctx => {
 
 
 router.get('/basket', async ctx =>{ 
+  // Check if the user is logged in - or send them back to the login page
 	if(ctx.session.authorised !== true) 
 		return ctx.redirect('/login?errorMsg=you are not logged in')
 	// Check for validation messages
 	const db = await Database.open(dbName)
-	// get the userID from the db
+	// get the data about items in basket from the db
 	const data = {}
 	const user = await db.get(`SELECT * FROM users WHERE username = "${ctx.session.user}";`)
 	const basket = await db.all(`SELECT itemID FROM basket WHERE userID = "${user.userID}";`)
 	let items = {}
-	let total = 0
+  let total = 0
+  //Get data about each item in basket and get total price
 	for(var i = 0; i < basket.length; i++){
 		items = await db.all(`SELECT * FROM items INNER JOIN basket ON basket.itemID=items.itemID WHERE basket.userID = "${user.userID}";`)
 		total += parseInt(items[i].price)
@@ -122,16 +127,17 @@ router.get('/basket', async ctx =>{
 	await ctx.render('basket', {items: items, user: user, data: data})
 })
 router.get('/checkout', async ctx =>{ 
+  // Check if the user is logged in - or send them back to the login page
 	if(ctx.session.authorised !== true) 
 	return ctx.redirect('/login?errorMsg=you are not logged in')
-	// Check for validation messages
 	const db = await Database.open(dbName)
-	// get the userID from the db
+	// get the data about items in basket from the db
 	const data = {}
 	const user = await db.get(`SELECT * FROM users WHERE username = "${ctx.session.user}";`)
 	const basket = await db.all(`SELECT itemID FROM basket WHERE userID = "${user.userID}";`)
 	let items = {}
-	let total = 0
+  let total = 0
+  //Get data about each item in basket and get total price
 	for(var i = 0; i < basket.length; i++){
 		//use join function for joining queries
 		items = await db.all(`SELECT * FROM items INNER JOIN basket ON basket.itemID=items.itemID WHERE basket.userID = "${user.userID}";`)
@@ -440,7 +446,8 @@ router.get('/:id', async ctx => {
 		// Check if the user is logged in - or send them back to the login page
 		console.log(ctx.session.authorised)
 		if(ctx.session.authorised !== true) 
-			return ctx.redirect('/login?errorMsg=you are not logged in')
+      return ctx.redirect('/login?errorMsg=you are not logged in')
+    //Get data about the item from the db
 		const db = await Database.open(dbName)
 		const data = {}
 		const record = await db.get(`SELECT * FROM items WHERE itemID = ${ctx.params.id};`)
@@ -464,22 +471,24 @@ router.get('/:id/add-to-basket', async ctx => {
 		console.log(ctx.session.authorised)
 		if(ctx.session.authorised !== true) 
 			return ctx.redirect('/login?errorMsg=you are not logged in')
-		// check if the item exists
 		const db = await Database.open(dbName)
-		const record = await db.get(`SELECT * FROM items WHERE itemID = ${ctx.params.id};`)
+    const record = await db.get(`SELECT * FROM items WHERE itemID = ${ctx.params.id};`)
+    // check if the item exists
 		if(record === undefined) throw new Error('unrecognised item')
 		// check if the item is for sale
 		if(record.status === false) 
-			return ctx.redirect(`/${ctx.params.id}?errorMsg=Item not for sale`)
+      return ctx.redirect(`/${ctx.params.id}?errorMsg=Item not for sale`)
+    // Check that buyer and seller are not the same person
 		const itemUser = await db.get(`SELECT * FROM users WHERE userID = ${record.userID};`)
 		if (itemUser.username === ctx.session.user) 
 			return ctx.redirect(`/${ctx.params.id}?errorMsg=Seller cannot buy their own item`)
 		const user = await db.get(`SELECT * FROM users WHERE username = "${ctx.session.user}";`)
-		const basketLength = await db.get(`SELECT COUNT(*) FROM basket WHERE userID = "${user.userID}" AND itemID = "${ctx.params.id}";`)
+    const basketLength = await db.get(`SELECT COUNT(*) FROM basket WHERE userID = "${user.userID}" AND itemID = "${ctx.params.id}";`)
+    // Check if item is already in this user's basket
 		if(basketLength['COUNT(*)'] > 0){
 			return ctx.redirect(`/${ctx.params.id}?errorMsg=Item already in your basket`)
-		}
-		//await db.run(`DELETE FROM basket WHERE userID="${user.userID}";`)
+    }
+    //Add to users basket
 		await db.run(`INSERT INTO basket(userID, itemID) VALUES("${user.userID}", "${ctx.params.id}")`)
 		ctx.redirect(`/${record.itemID}`)
 	} catch(err) {
@@ -494,20 +503,18 @@ router.get('/buy/:id', async ctx => {
 	console.log(ctx.session.authorised)
 	if(ctx.session.authorised !== true) 
 		return ctx.redirect('/login?errorMsg=you are not logged in')
-	// check if the item exists
-	const db = await Database.open(dbName)
-	const record = await db.get(`SELECT * FROM items WHERE itemID = ${ctx.params.id};`)
+  // check if the item exists
 	if(record === undefined) throw new Error('unrecognised item')
 	// check if the item is for sale
 	if(record.status === false) 
-		return ctx.redirect(`/${ctx.params.id}?errorMsg=Item not for sale`)
+    return ctx.redirect(`/${ctx.params.id}?errorMsg=Item not for sale`)
+  // Check that buyer and seller are not the same person
 	const itemUser = await db.get(`SELECT * FROM users WHERE userID = ${record.userID};`)
 	if (itemUser.username === ctx.session.user) 
 		return ctx.redirect(`/${ctx.params.id}?errorMsg=Seller cannot buy their own item`)
 	const user = await db.get(`SELECT * FROM users WHERE username = "${ctx.session.user}";`)
-	if(await db.get(`SELECT * FROM basket WHERE userID = "${ctx.params.id}" AND itemID = "${ctx.params.id}";`).count){
-		return ctx.redirect(`/${ctx.params.id}?errorMsg=Item already in your basket`)
-	}
+  const basketLength = await db.get(`SELECT COUNT(*) FROM basket WHERE userID = "${user.userID}" AND itemID = "${ctx.params.id}";`)
+  //Empty user's basket and add this item to it
 	await db.run(`DELETE FROM basket WHERE userID="${user.userID}";`)
 	await db.run(`INSERT INTO basket(userID, itemID) VALUES("${user.userID}", "${ctx.params.id}")`)
 	ctx.redirect(`/basket`)
