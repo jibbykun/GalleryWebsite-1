@@ -15,6 +15,7 @@ module.exports = class Account {
 			// we need this table to store the user accounts
 			await this.db.run('CREATE TABLE IF NOT EXISTS users (userID INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, password TEXT, profilePicture TEXT, paypalUsername TEXT, emailAddress TEXT);')
 			await this.db.run('CREATE TABLE IF NOT EXISTS items (itemID INTEGER PRIMARY KEY AUTOINCREMENT, userID INTEGER, item TEXT, year INTEGER, price TEXT, artist TEXT, medium TEXT, size TEXT, sDescription TEXT, lDescription TEXT, imageDir1 TEXT, imageDir2 TEXT, imageDir3 TEXT, status BOOLEAN);')
+			await this.db.run('CREATE TABLE IF NOT EXISTS fav (ID INTEGER PRIMARY KEY AUTOINCREMENT, userID INTEGER, itemID INTEGER, favourite BOOLEAN);')
 			return this
 		})()
 	}
