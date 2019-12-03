@@ -17,7 +17,6 @@
             function validate() {
                 var name = document.getElementById("name").value;
                 var subject = document.getElementById("subject").value;
-                var phone = document.getElementById("phone").value;
                 //var email = document.getElementById("email").value;
                 var message = document.getElementById("message").value;
                 var contact_error_message = document.getElementById("contact_error_message");
@@ -35,11 +34,7 @@
                 contact_error_message.innerHTML = text;
                 return false;
                 }
-                if(isNaN(phone) || phone.length != 10){
-                text = "Please Enter valid Phone Number";
-                contact_error_message.innerHTML = text;
-                return false;
-                }
+               
                 //if(email.indexOf("@") == -1 || email.length < 6){
                 //  text = "Please Enter valid Email";
                 //  contact_error_message.innerHTML = text;
@@ -53,6 +48,8 @@
                 alert("Form Submitted Successfully!");
                 return true;
                 }
+
+            console.log(phone)
 
         </script>
     </head>
@@ -99,15 +96,12 @@
            <div id="contact_error_message">
 
            </div>
-           <form action="" id="contactForm" onsubmit="return validate();">
+           <form action="mailto:webxgallery@gmail.com" method="post" enctype="text/plain" id="contactForm" onsubmit="return validate();">
                <div class="contact_input">
                    <input type="text" placeholder="Name" id="name">
                    <br><br>
 
                    <input type="text" placeholder="Subject" id="subject">
-                   <br><br>
-
-                   <input type="text" placeholder="Phone" id="phone">
                    <br><br>
 
                    <textarea placeholder="Message" id="message"></textarea>
