@@ -171,6 +171,11 @@ router.get('/changeEmail', async ctx => {
 }
 	// Check for validation messages
 	const data = {}
+	const db = await Database.open(dbName)
+	const record = await db.get(`SELECT emailAddress FROM users WHERE username = "${ctx.session.user}";`)
+	console.log(record)
+	await db.close()
+	data.usEmail = record.emailAddress
 	if (ctx.query.errorMsg) data.errorMsg = ctx.query.errorMsg
 	if (ctx.query.successMsg) data.successMsg = ctx.query.successMsg
 	data.authorised = ctx.session.authorised
@@ -186,7 +191,6 @@ router.post('/changeEmail', async ctx => {
 		account = await new Account(dbName)
 		console.log(ctx.session.user)
 		await account.changeEmail(body.emailAddress, ctx.session.user)
-
 		ctx.redirect('/changeEmail?successMsg=You have successfully changed your email address!')
 	} catch(err) {
 		return ctx.redirect(`/changeEmail?errorMsg=${err.message}`)
@@ -229,6 +233,11 @@ router.get('/changeUsername', async ctx => {
 }
 	// Check for validation messages
 	const data = {}
+	const db = await Database.open(dbName)
+	const record = await db.get(`SELECT username FROM users WHERE username = "${ctx.session.user}";`)
+	console.log(record)
+	await db.close()
+	data.usName = record.username
 	if (ctx.query.errorMsg) data.errorMsg = ctx.query.errorMsg
 	if (ctx.query.successMsg) data.successMsg = ctx.query.successMsg
 	data.authorised = ctx.session.authorised

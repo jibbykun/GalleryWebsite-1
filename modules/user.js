@@ -5,6 +5,8 @@ const bcrypt = require('bcrypt-promise')
 const fs = require('fs-extra')
 const mime = require('mime-types')
 const sqlite = require('sqlite-async')
+const emailValidation = require('../modules/validEmail')
+const Account = require('../modules/account.js')
 const saltRounds = 10
 
 module.exports = class User {
@@ -21,6 +23,9 @@ module.exports = class User {
 
 	async register(username, password, passwordRepeat, paypalUsername, emailAddress) {
 		try {
+			//check if the email is in the correct format
+			if (emailValidation.emailValidation(emailAddress) === false)
+				throw new Error('Email is in the wrong format')
 			// check if the password is at least 10 characters long
 			if (password.length < 10)
 				throw new Error('Password must be at least 10 characters')

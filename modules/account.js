@@ -141,8 +141,9 @@ module.exports = class Account {
 	{
 		try {
 			/* Server Side Email Validation */
-			if (!emailValidation.emailValidation(email))
+			if (!emailValidation.emailValidation(email)){
 				throw new Error('Please enter your new email address in the correct format')
+				return false;}
 			
 			await this.db.run(`UPDATE users  SET emailAddress =  "${email}" WHERE username="${user}";`)
 			return true;
