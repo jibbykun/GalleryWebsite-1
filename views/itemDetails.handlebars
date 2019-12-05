@@ -67,9 +67,9 @@
                 <a href="/buy/{{record.itemID}}"><button id="detail_description-buyitnow"><h3>Buy it Now</h3></button></a>
                 <a href="/{{record.itemID}}/add-to-basket"><button id="detail_description-addtobasket"><h3>Add to basket</h3></button></a>
                 {{#if data.favourited}}
-                <a href="/favourite/{{record.itemID}}"><button id="detail_description-favourite"><h3>Remove from favourites</h3></button></a>
+                <a href="/favourite/{{record.itemID}}"><button id="detail_description-favourite"><h3>Remove from favourites <span id="fav-count">({{favCount}})</span></h3></button></a>
                 {{else}}
-                <a href="/favourite/{{record.itemID}}"><button id="detail_description-favourite"><h3>Add to favourites</h3></button></a>
+                <a href="/favourite/{{record.itemID}}"><button id="detail_description-favourite"><h3>Add to favourites <span id="fav-count">({{favCount}})</span></h3></button></a>
                 {{/if}}
             </div>
         </div>

@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta charset="UTF-8", content="width=device-width, initial-scale=1">
-        <title>My Items</title><html>
+        <title>Edit item</title><html>
         <link rel="stylesheet" type="text/css" href="style.css">
         <script type="text/javascript">
             function toggleSidemenu(){ 
@@ -16,11 +16,11 @@
     </head>
 
 <body id="body">
-    	{{#if data.successMsg}}
- 			<p class="msg-success">{{data.successMsg}}</p>
+    	{{#if successMsg}}
+ 			<p class="msg-success">{{successMsg}}</p>
 		{{/if}}
-        {{#if data.errorMsg}}
- 			<p class="msg-danger">{{data.errorMsg}}</p>
+        {{#if errorMsg}}
+ 			<p class="msg-danger">{{errorMsg}}</p>
 		{{/if}}
     <section class="container">
         <section class="header">
@@ -50,37 +50,18 @@
                 </ul>
             </section>
         </section>
-
-
-        <h1>Your listed items</h1>
-        <section class="gallery">
-            {{#each items}}
-                <section class="gallery-item">
-                    <a class="gallery-item-edit center" href="/edit/{{itemID}}"><h3>Edit item</h3></a>
-                    <a href="/{{itemID}}">
-                        <img src="{{imageDir1}}" alt="No picture found" width="600" height="400">
-                        {{#if imageDir2}}
-                            <img src="{{imageDir2}}" alt="No item picture" width="600" height="400">
-                        {{/if}}
-                        {{#if imageDir3}}
-                            <img src="{{imageDir3}}" alt="No item picture" width="600" height="400">
-                        {{/if}}
-                    <section class="gallery-item-description"><h3>{{item}}</h3> <p>£{{price}}</p></section>
-                    </a>
-                    </section>
-            {{/each}}
-        </section>
-        <h1>Your favourite items</h1>
-        <section class="gallery">
-            {{#each f_items}}
-                <section class="gallery-item">
-                    <a href="/{{itemID}}">
-                        <img src="{{imageDir1}}" alt="No picture found" width="600" height="400">
-                    <section class="gallery-item-description"><h3>{{item}}</h3> <p>£{{price}}</p></section>
-                    </a>
-                </section>
-            {{/each}}
-        </section>
+		<form class="sell_form" action="/edit/{{record.itemID}}" enctype="multipart/form-data" method="post">
+            <p>Change information about the listed item</p>
+			<p>Name:*<br /><input id="sell_form-item" type="text" name="item" value="{{record.item}}" placeholder="e.g. The Kiss" required></p>
+			<p>Year:*<br /><input id="sell_form-year" type="number" name="year" value="{{record.year}}" placeholder="e.g. 1908" required></p>
+            <p>Price:*<br /><input id="sell_form-price" type="number" name="price"  value="{{record.price}}" required></p>
+            <p>Artist:*<br /><input id="sell_form-artist" type="text" name="artist"  value="{{record.artist}}" placeholder="e.g. Gustav Klimt" required></p>
+			<p>Medium:*<br /><input id="sell_form-medium" type="text" name="medium" value="{{record.medium}}" placeholder="e.g. Oil on canvas painting" required></p>
+			<p>Size:*<br /><input id="sell_form-size" type="text" name="size" value="{{record.size}}" placeholder="e.g. 180 cm x 180 cm" required></p>
+			<p>Short Description:*<br/><textarea id="sell_form-sDescription" cols="36" rows="5" name="sDescription" value="" placeholder="e.g. The painting depicts a couple embracing each other, their bodies entwined in elaborate beautiful robes decorated in a style influenced by the contemporary Art Nouveau style and the organic forms of the earlier Arts and Crafts movement." required>{{record.sDescription}}</textarea></p>
+			<p>Long Description:*<br/><textarea id="sell_form-lDescription" cols="36" rows="5" name="lDescription" value="" placeholder="e.g. Gustav Klimt depicts the couple locked in an intimate embrace against a gold, flat background. The two figures are situated at the edge of a patch of flowery meadow that ends under the woman's exposed feet. The man wears a robe printed with geometric patterns and subtle swirls. He wears a crown of vines while the woman wears a crown of flowers. She is shown in a flowing dress with floral patterns. The man's face is not shown to the audience and instead, his face is bent downward to press a kiss to the woman's cheek, and his hands are cradling the woman's face. Her eyes are closed, with one arm wrapped around the man's neck, the other resting gently on his hand, and her face is upturned to receive the man's kiss. ." required>{{record.lDescription}}</textarea></p>
+			<p><input type="submit" value="Upload"></p>
+		</form>
     </section>
 </body>
 

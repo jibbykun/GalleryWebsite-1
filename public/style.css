@@ -21,6 +21,13 @@ a, a:visited, a:active, a:hover{
   word-break:break-word;
 }
 
+.gallery-item-edit h3{
+  color: #00aeff;
+  transition: color 0.3s;
+}
+.gallery-item-edit:hover h3{
+  color: #0084c2;
+}
 .italicstext {
   font-style: italic;
   text-align: center;
@@ -366,6 +373,9 @@ h4 {
 #detail_description-favourite:hover{
   background: #cfcdc8;
 }
+#fav-count{
+  color: #00aeff;
+}
 .detail_bottom{
   margin-top: 50px;
   display: flexbox;
@@ -500,11 +510,9 @@ h4 {
     top: 10px;
     cursor: pointer;
     opacity: 1;
-    transition: opacity 0.3s;
+    transition: background 0.3s;
    }
-   .toggle-btn:hover{
-    opacity: 0.7;
-   }
+
    #sidemenu .toggle-btn span{
     display: block;
     width: 30px;
@@ -516,6 +524,10 @@ h4 {
     transition-duration: 0.4s;
    }
 
+   #sidemenu .toggle-btn:hover span{
+    background: #0084c2;
+   }
+   
    .blockoftext {
     font-size: xx-large;
   }

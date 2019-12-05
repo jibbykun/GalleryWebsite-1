@@ -47,7 +47,7 @@ router.get('/', async ctx => {
 		const db = await Database.open(dbName)
 		const records = await db.all('SELECT * FROM items;')
 		data.authorised = ctx.session.authorised
-		await ctx.render('index', { items: records, data: data })
+		await ctx.render('index', { items: records, data: data})
 	} catch (err) {
 		console.log(err.message)
 		await ctx.render('error', { message: err.message })
@@ -474,6 +474,36 @@ router.post('/uploadItem', koaBody, async ctx => {
 	}
 })
 
+router.get('/edit/:id', async ctx => {
+	if (ctx.session.authorised !== true) {
+ return ctx.redirect('/login?errorMsg=you are not logged in') 
+}
+	// Check for validation messages
+	const db = await Database.open(dbName)
+	const data = {}
+	const record = await db.get(`SELECT * FROM items WHERE itemID = "${ctx.params.id}";`)
+	if (ctx.query.errorMsg) data.errorMsg = ctx.query.errorMsg
+	if (ctx.query.successMsg) data.successMsg = ctx.query.successMsg
+	data.authorised = ctx.session.authorised
+	await ctx.render('edit', {data: data, record: record})
+})
+
+router.post('/edit/:id', koaBody, async ctx => {
+	if (ctx.session.authorised !== true) {
+ return ctx.redirect('/login?errorMsg=you are not logged in') 
+}
+	try {
+		const body = ctx.request.body
+		const db = await Database.open(dbName)
+		await db.run(`UPDATE items SET item = "${body.item}", year = "${body.year}", price = "${body.price}", artist = "${body.artist}", medium = "${body.medium}", size = "${body.size}", sDescription = "${body.sDescription}", lDescription = "${body.lDescription}" WHERE itemID = "${ctx.params.id}";`)
+		// redirect to my items page
+		ctx.redirect('/myItems?successMsg=information changed successfully')
+	} catch (err) {
+		return ctx.redirect(`/edit/:id?errorMsg=${err.message}`)
+	} finally {
+	}
+})
+
 router.get('/myItems', async ctx => {
 	if (ctx.session.authorised !== true) {
  return ctx.redirect('/login?errorMsg=you are not logged in') 
@@ -483,11 +513,12 @@ router.get('/myItems', async ctx => {
 		// get the userID from the db
 		const data = {}
 		const record = await db.get(`SELECT userID FROM users WHERE username = "${ctx.session.user}";`)
-		const item = await db.all(`SELECT * FROM items WHERE userID = "${record.userID}";`)
+		const items = await db.all(`SELECT * FROM items WHERE userID = "${record.userID}";`)
+		const f_items = await db.all(`SELECT * FROM fav LEFT JOIN items ON items.itemID = fav.itemID WHERE fav.userID = "${record.userID}";`)
 		data.authorised = ctx.session.authorised
 		if (ctx.query.errorMsg) data.errorMsg = ctx.query.errorMsg
 		if (ctx.query.successMsg) data.successMsg = ctx.query.successMsg
-		await ctx.render('myItems', { items: item, data: data })
+		await ctx.render('myItems', { items: items, data: data, f_items: f_items })
 	} catch (err) {
 		console.error(err.message)
 		await ctx.render('error', { message: err.message })
@@ -512,8 +543,10 @@ router.get('/:id', async ctx => {
     if(!userRecords.count) 
       throw new Error('User doesnt exist')
     const userRecord = await db.get(`SELECT userID FROM users WHERE username = "${ctx.session.user}";`)
-    const favRecord = await db.get(`SELECT count(ID) AS count FROM fav WHERE userID="${userRecord.userID}" AND itemID="${ctx.params.id}" AND favourite="true";`)
-    data.favourited = false
+    const favRecord = await db.get(`SELECT count(itemID) AS count FROM fav WHERE userID="${userRecord.userID}" AND itemID="${ctx.params.id}" AND favourite="true";`)
+	let favCount = await db.get(`SELECT count(itemID) AS count FROM fav WHERE itemID = "${ctx.params.id}";`)
+	favCount = favCount['count']
+	data.favourited = false
     if(favRecord.count) 
       data.favourited = true
 		// set the data - item info + user info
@@ -521,7 +554,7 @@ router.get('/:id', async ctx => {
 		if(ctx.query.errorMsg) data.errorMsg = ctx.query.errorMsg
 		if(ctx.query.successMsg) data.successMsg = ctx.query.successMsg
 		data.authorised = ctx.session.authorised
-		await ctx.render('itemDetails', {record: record, data: data})
+		await ctx.render('itemDetails', {record: record, data: data, favCount : favCount})
 	} catch(err) {
 		console.error(err.message)
 		await ctx.render('error', {message: err.message})
@@ -664,7 +697,7 @@ router.get('/favourite/:id', async ctx => {
     if(!records.count) 
       throw new Error('User doesnt exist')
     const record = await db.get(`SELECT userID FROM users WHERE username = "${ctx.session.user}";`)
-    const favRecord = await db.get(`SELECT count(ID) AS count FROM fav WHERE userID="${record.userID}" AND itemID="${ctx.params.id}";`)
+    const favRecord = await db.get(`SELECT count(itemID) AS count FROM fav WHERE userID="${record.userID}" AND itemID="${ctx.params.id}";`)
     let msg = 'Added to favourites'
     if(favRecord.count)
     { 
@@ -675,7 +708,7 @@ router.get('/favourite/:id', async ctx => {
         fav = false
         msg = 'Removed from favourites'
       }  
-      await db.run(`UPDATE fav SET favourite = "${fav}" WHERE userID="${record.userID}" AND itemID="${ctx.params.id}"; `)
+      await db.run(`DELETE FROM fav WHERE userID="${record.userID}" AND itemID="${ctx.params.id}"; `)
     }
     else
     {
@@ -695,7 +728,7 @@ module.exports = app.listen(port, async() => {
 	await db.run('CREATE TABLE IF NOT EXISTS users (userID INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, password TEXT, profilePicture TEXT, paypalUsername TEXT, emailAddress TEXT);')
 	await db.run('CREATE TABLE IF NOT EXISTS items (itemID INTEGER PRIMARY KEY AUTOINCREMENT, userID INTEGER, item TEXT, year INTEGER, price TEXT, artist TEXT, medium TEXT, size TEXT, sDescription TEXT, lDescription TEXT, imageDir1 TEXT, imageDir2 TEXT, imageDir3 TEXT, status BOOLEAN);')
   await db.run('CREATE TABLE IF NOT EXISTS basket (userID INTEGER, itemID INTEGER, CONSTRAINT userID FOREIGN KEY (userID) REFERENCES users(userID),  CONSTRAINT itemID FOREIGN KEY (itemID) REFERENCES items(itemID));')
-  await db.run('CREATE TABLE IF NOT EXISTS fav (ID INTEGER PRIMARY KEY AUTOINCREMENT, userID INTEGER, itemID INTEGER, favourite BOOLEAN);')
+  await db.run('CREATE TABLE IF NOT EXISTS fav (userID INTEGER, itemID INTEGER, favourite BOOLEAN, CONSTRAINT userID FOREIGN KEY (userID) REFERENCES users(userID),  CONSTRAINT itemID FOREIGN KEY (itemID) REFERENCES items(itemID));')
 	await db.close()
 	console.log(`listening on port ${port}`)
 })
