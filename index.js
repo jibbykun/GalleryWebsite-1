@@ -679,15 +679,15 @@ router.post('/search', async ctx => {
 		const body = ctx.request.body
 		const db = await Database.open(dbName)
 		const data = {}
-		// Check if there is a search result
-		const records = await db.get(`SELECT count(itemID) AS count FROM items WHERE item LIKE "%${body.search}%";`)
+		// Check if there is a search result 
+		const records = await db.get(`SELECT count(itemID) AS count FROM items WHERE item LIKE "%${body.search}%" OR sDescription LIKE "%${body.search}%" OR lDescription LIKE "%${body.search}%";`)
 		// no search result - go back
 		if (!records.count) {
  return ctx.redirect('/?errorMsg=No items found.') 
 }
 
 		// run the query and render the index page
-		const item = await db.all(`SELECT * FROM items WHERE item LIKE '%${body.search}%';`)
+		const item = await db.all(`SELECT * FROM items WHERE item LIKE "%${body.search}%" OR sDescription LIKE "%${body.search}%" OR lDescription LIKE "%${body.search}%";`)
 
 		await db.close()
 		await ctx.render('index', { items: item, data: data })
