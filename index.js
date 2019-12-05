@@ -542,19 +542,20 @@ router.get('/:id', async ctx => {
     const userRecords = await db.get(`SELECT count(userID) AS count FROM users WHERE username="${ctx.session.user}";`)
     if(!userRecords.count) 
       throw new Error('User doesnt exist')
-    const userRecord = await db.get(`SELECT userID FROM users WHERE username = "${ctx.session.user}";`)
+    const userRecord = await db.get(`SELECT * FROM users WHERE username = "${ctx.session.user}";`)
     const favRecord = await db.get(`SELECT count(itemID) AS count FROM fav WHERE userID="${userRecord.userID}" AND itemID="${ctx.params.id}" AND favourite="true";`)
 	let favCount = await db.get(`SELECT count(itemID) AS count FROM fav WHERE itemID = "${ctx.params.id}";`)
 	favCount = favCount['count']
 	data.favourited = false
     if(favRecord.count) 
-      data.favourited = true
-		// set the data - item info + user info
-		record.username = itemUser.username
-		if(ctx.query.errorMsg) data.errorMsg = ctx.query.errorMsg
-		if(ctx.query.successMsg) data.successMsg = ctx.query.successMsg
-		data.authorised = ctx.session.authorised
-		await ctx.render('itemDetails', {record: record, data: data, favCount : favCount})
+	  data.favourited = true
+	record.picDir = `ProfilePictures/${  userRecord.profilePicture  }.png`
+	// set the data - item info + user info
+	record.username = itemUser.username
+	if(ctx.query.errorMsg) data.errorMsg = ctx.query.errorMsg
+	if(ctx.query.successMsg) data.successMsg = ctx.query.successMsg
+	data.authorised = ctx.session.authorised
+	await ctx.render('itemDetails', {record: record, data: data, favCount : favCount})
 	} catch(err) {
 		console.error(err.message)
 		await ctx.render('error', {message: err.message})
