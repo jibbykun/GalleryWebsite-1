@@ -23,16 +23,16 @@
  			<p class="msg-danger">{{data.errorMsg}}</p>
 		{{/if}}
     <section class="container">
-        <div class="header">
+        <section class="header">
             <a href="/" class="header_logo center"><button><img src="WebxLogo.png"/></button></a>
-            <div id="sidemenu">
-                <div class="toggle-btn" onclick="toggleSidemenu()">
+            <section id="sidemenu">
+                <section class="toggle-btn" onclick="toggleSidemenu()">
                     <a>
                         <span></span>
                         <span></span>
                         <span></span>
                     </a>
-                </div>
+                </section>
                 <ul>
                     <a href="/"><li> Home  </li></a>
                     {{#if data.authorised}}
@@ -48,16 +48,16 @@
                     <a href="about"><li> About </li></a>
                     <a href="contact"><li> Contact </li></a>
                 </ul>
-            </div>
-        </div>
+            </section>
+        </section>
 
-        <div class="detail_top">
+        <section class="detail_top">
             <h1 class="center">{{record.item}} ({{record.year}}) <span id="detail_top-status">{{record.status}}</span></h1>
-            <div class="detail_image_previews"></div>
-            <div class="detail_image_main">
+            <section class="detail_image_previews"></section>
+            <section class="detail_image_main">
                 <a id="detail_image_main-a" href="{{record.imageDir1}}"><img id="detail_image_main-id" src="{{record.imageDir1}}" alt="No picture found"/></a>
-            </div>
-            <div class="detail_description">
+            </section>
+            <section class="detail_description">
                 <p>{{record.sDescription}}</p>
                 <p>Price: £{{record.price}}</p>
                 <p>Artist: {{record.artist}}</p>
@@ -71,15 +71,15 @@
                 {{else}}
                 <a href="/favourite/{{record.itemID}}"><button id="detail_description-favourite"><h3>Add to favourites <span id="fav-count">({{favCount}})</span></h3></button></a>
                 {{/if}}
-            </div>
-        </div>
+            </section>
+        </section>
 
-        <div class="detail_bottom">
-            <div class="detail_more_description">
+        <section class="detail_bottom">
+            <section class="detail_more_description">
                 <h3>Description</h3>
                 <p>{{record.lDescription}}</p>
-            </div>
-            <div class="detail_seller">
+            </section>
+            <section class="detail_seller">
                 <h3>Seller Details</h3>
                 <p>Username: {{record.username}}</p>
                 <p>Current Profile Picture</p>
@@ -87,8 +87,8 @@
                     <img src="{{record.picDir}}" alt="No profile picture" width="600" height="400">
                 </a>
                 <a href="/contactSeller/{{record.itemID}}"><button id="detail_seller-contact"><h3>Contact</h3></button></a>
-            </div>
-        </div>
+            </section>
+        </section>
 
     </section>
 </body>

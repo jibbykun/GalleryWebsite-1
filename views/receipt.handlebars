@@ -25,16 +25,16 @@
  			<p class="msg-danger">{{errorMsg}}</p>
 		{{/if}}
     <section class="container">
-        <div class="header">
+        <section class="header">
             <a href="/" class="header_logo center"><button><img src="WebxLogo.png"/></button></a>
-            <div id="sidemenu">
-                <div class="toggle-btn" onclick="toggleSidemenu()">
+            <section id="sidemenu">
+                <section class="toggle-btn" onclick="toggleSidemenu()">
                     <a>
                         <span></span>
                         <span></span>
                         <span></span>
                     </a>
-                </div>
+                </section>
                 <ul>
                     <a href="/"><li> Home  </li></a>
                     {{#if data.authorised}}
@@ -50,10 +50,9 @@
                     <a href="about"><li> About </li></a>
                     <a href="contact"><li> Contact </li></a>
                 </ul>
-            </div>
-        </div>
+            </section>
+        </section>
         <h1>Thank you for shopping with our gallery</h1>
-        <p>Your items {{fullname}}</p>
     </section>
 </body>
 <footer> 
