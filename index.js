@@ -601,6 +601,8 @@ router.get('/buy/:id', async ctx => {
  return ctx.redirect('/login?errorMsg=you are not logged in') 
 }
 	try {
+	const db = await Database.open(dbName)
+	const record = await db.get(`SELECT * FROM items WHERE itemID = ${ctx.params.id};`)
 	// Check if the user is logged in - or send them back to the login page
 	console.log(ctx.session.authorised)
 	if(ctx.session.authorised !== true) 
@@ -661,7 +663,10 @@ router.post('/email', async ctx => {
 		const body = ctx.request.body
 
 		account = await new Account(dbName)
-		await account.email(body.itemID, ctx.session.user, body.message)
+		if (body.offerYes)
+			await account.email(body.itemID, ctx.session.user, body.message, body.price)
+		else 
+			await account.email(body.itemID, ctx.session.user, body.message)
 
 		return ctx.redirect(`/${body.itemID}?successMsg=Message Sent...`)
 	} catch (err) {
