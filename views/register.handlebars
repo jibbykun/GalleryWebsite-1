@@ -52,38 +52,42 @@
         </div>
 
 
-        <h1>Sign Up</h1>
-        <p>Please fill in this form to create an account.</p>
-        <hr>
-        <form action="/register" method="POST">
-            <div>
-                <label for="username"><b>Username</b></label>
-                <input type="text" placeholder="Enter Username" name="username" required>
-            </div>
+        
+        <div class="login-wrap">
+            <h2>Sign Up</h2>
+            <p>Please fill in this form to create an account.</p>
+            <div class="login-form">
+                <form action="/register" method="POST">
+                    <div>
+                        <label for="username"><b>Username</b></label>
+                        <input type="text" placeholder="Enter Username" name="username" required>
+                    </div>
 
-            <div>
-                <label for="Email"><b>Email Address</b></label>
-                <input type="email" placeholder="susan@example.com" name="emailAddress" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" required>
-            </div>
+                    <div>
+                        <label for="Email"><b>Email Address</b></label>
+                        <input type="email" placeholder="susan@example.com" name="emailAddress" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" required>
+                    </div>
 
-            <div>
-                <label for="username"><b>Paypal Username</b></label>
-                <input type="username" placeholder="Enter Paypal Username" name="paypalUsername" required>
-            </div>
+                    <div>
+                        <label for="username"><b>Paypal Username</b></label>
+                        <input type="username" placeholder="Enter Paypal Username" name="paypalUsername" required>
+                    </div>
 
-            <div>
-                <label for="password"><b>Password</b></label>
-                <input type="password" placeholder="Enter Password" name="password" required>
+                    <div>
+                        <label for="password"><b>Password</b></label>
+                        <input type="password" placeholder="Enter Password" name="password" required>
+                    </div>
+                    
+                    <div>
+                        <label for="passwordRepeat"><b>Repeat Password</b></label>
+                        <input type="password" placeholder="Repeat Password" name="passwordRepeat" required>
+                    </div>
+                    <p class="small">Your password must be at least 10 characters long, contain one uppercase character and one number.</p>
+                    <p><input type="submit" value="Register"></p>
+                </form>
+                <a href="/login"><p>If you already have an account, Login Here</p></a>
             </div>
-            
-            <div>
-                <label for="passwordRepeat"><b>Repeat Password</b></label>
-                <input type="password" placeholder="Repeat Password" name="passwordRepeat" required>
-            </div>
-            <p class="small">Your password must be at least 10 characters long, contain one uppercase character and one number.</p>
-            <p><input type="submit" value="Register"></p>
-        </form>
-        <p>If you already have an account, <a href="/login">Login Here</a></p>
+        </div>
     </section>
 </body>
 
