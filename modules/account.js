@@ -86,19 +86,36 @@ module.exports = class Account {
 
 	}
 
-	async email(itemID, user, message) {
+	async email(itemID, user, message, offer = 0) {
 		try {
 			const itemRecord = await this.db.get(`SELECT * FROM items WHERE itemID = ${itemID};`)
 			const sellerRecord = await this.db.get(`SELECT * FROM users WHERE userID = "${itemRecord.userID}";`)
 			const userRecord = await this.db.get(`SELECT * FROM users WHERE username = "${user}";`)
 	
-			const output = `
-			<p>Hi ${sellerRecord.username},</p>
-			<p>You have a new question about an item you are selling: ${itemRecord.item}</p>
-			<p>${userRecord.username} asks:</p>
-			<p>${message}</p>
-			<p>Thank you.</p>
-		  `;
+			let output = "";
+			
+			if (offer != 0)
+			{
+				output = `
+				<p>Hi ${sellerRecord.username},</p>
+				<p>You have a new offer for an item you are selling: ${itemRecord.item}</p>
+				<p>${userRecord.username} has made an offer of: ${offer}</p>
+				<p>${userRecord.username} asks:</p>
+				<p>${message}</p>
+				<p>Thank you.</p>
+				`;
+			}
+			else 
+			{
+					output = `
+					<p>Hi ${sellerRecord.username},</p>
+					<p>You have a new question about an item you are selling: ${itemRecord.item}</p>
+					<p>${userRecord.username} asks:</p>
+					<p>${message}</p>
+					<p>Thank you.</p>
+				`;
+			}
+
 	
 		var transporter = nodemailer.createTransport({
 			host: "smtp-mail.outlook.com", // hostname

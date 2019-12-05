@@ -63,6 +63,8 @@
         <input type="text" name="itemID" hidden value="{{item.itemID}}">
         <p>Send a message to <b>{{seller.username}}</b></p>
         <p><textarea rows="10" cols="150" name="message" required></textarea></p>
+        <p>Make an offer<input type="checkbox" name="offerYes" id="offerYes" value="true" onclick="validate()"></p><br>
+        <p style="display:none" id="offerPrice">Price:*<br /><input id="sell_form-price" type="number" name="price"  value=""></p>
         <p><input type="submit" value="Send"></p>
     </form>
 
@@ -79,6 +81,14 @@
     const footer = document.querySelector("footer")
     if(bodyHeight < window.innerHeight){
         footer.classList.add("bottom")
+    }
+
+    function validate() {
+        if (document.getElementById('offerYes').checked) {
+            document.getElementById('offerPrice').style.display = "block";
+        } else {
+            document.getElementById('offerPrice').style.display = "none";
+        }
     }
 </script>
 </html>

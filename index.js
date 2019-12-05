@@ -655,7 +655,10 @@ router.post('/email', async ctx => {
 		const body = ctx.request.body
 
 		account = await new Account(dbName)
-		await account.email(body.itemID, ctx.session.user, body.message)
+		if (body.offerYes)
+			await account.email(body.itemID, ctx.session.user, body.message, body.price)
+		else 
+			await account.email(body.itemID, ctx.session.user, body.message)
 
 		return ctx.redirect(`/${body.itemID}?successMsg=Message Sent...`)
 	} catch (err) {
