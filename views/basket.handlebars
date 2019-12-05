@@ -25,16 +25,16 @@
  			<p class="msg-danger">{{errorMsg}}</p>
 		{{/if}}
     <section class="container">
-        <div class="header">
+        <section class="header">
             <a href="/" class="header_logo center"><button><img src="WebxLogo.png"/></button></a>
-            <div id="sidemenu">
-                <div class="toggle-btn" onclick="toggleSidemenu()">
+            <section id="sidemenu">
+                <section class="toggle-btn" onclick="toggleSidemenu()">
                     <a>
                         <span></span>
                         <span></span>
                         <span></span>
                     </a>
-                </div>
+                </section>
                 <ul>
                     <a href="/"><li> Home  </li></a>
                     {{#if data.authorised}}
@@ -50,31 +50,31 @@
                     <a href="about"><li> About </li></a>
                     <a href="contact"><li> Contact </li></a>
                 </ul>
-            </div>
-        </div>
+            </section>
+        </section>
         <h1>Your basket</h1>
-        <div class="basket_left">
+        <section class="basket_left">
             {{#each items}}
-                <div class="basket_left-item">
+                <section class="basket_left-item">
 
                     <a href="/{{itemID}}"><img src="{{imageDir1}}" alt="No picture found" width="600" height="400"></a>
-                        <div class="basket_left-item-description">
+                        <section class="basket_left-item-description">
                             <a href="/{{itemID}}"><h3 id="basket_left-item-description-title">{{item}} ({{year}})</h3></a> <h3 id="basket_left-item-description-price">£{{price}}</h3>
                             <p>{{sDescription}}</p>
                             <p>By {{artist}}</p>
                             <p>{{medium}}</p>
                             <p>{{size}}</p>
                             <p>#{{itemID}}</p>
-                        </div>
-                </div>
+                        </section>
+                </section>
             {{/each}}
-        </div>
-        <div class="basket_right">
+        </section>
+        <section class="basket_right">
             <h3 class="center">Order Summary</h3>
             <h3 id="basket_right-total">Total: £{{data.total}}</h3>
 
             <a href="/checkout"><input class="basket_right-btn" type="submit" value="Checkout with PayPal"></a>
-        </div>
+        </section>
 
     </section>
 </body>

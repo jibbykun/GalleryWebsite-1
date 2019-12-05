@@ -89,12 +89,17 @@ router.post('/receipt', async ctx => {
     //Get data from db
 		const db = await Database.open(dbName)
 		const user = await db.get(`SELECT * FROM users WHERE username = "${ctx.session.user}";`)
-		const basket = await db.get(`SELECT itemID FROM basket WHERE userID = "${user.userID}";`)
+		
+		const basket = await db.get(`SELECT * FROM basket WHERE userID = "${user.userID}";`)
+		const sellerID = await db.get(`SELECT userID FROM items WHERE itemID = "${basket.itemID}";`)
+		const seller = await db.get(`SELECT * FROM users WHERE userID = "${sellerID['userID']}";`)
 		//Mark item as sold
-		await db.run(`UPDATE items SET status = false WHERE itemID = "${basket['itemID']}"; `)
+		await db.run(`UPDATE items SET status = false WHERE itemID = "${basket.itemID}"; `)
 		await db.run(`DELETE FROM basket WHERE userID="${user.userID}";`)
     //Item is sold, send email to seller
-    
+		account = await new Account(dbName)
+		await account.email(basket.itemID, seller.username, 'Your item was bought')
+
 		ctx.redirect(`/receipt?successMsg=Thank you for your purchase!`)
 	} catch(err) {
 		console.log(err.message)
@@ -568,7 +573,7 @@ router.get('/:id/add-to-basket', async ctx => {
 		if(ctx.session.authorised !== true)
 			return ctx.redirect('/login?errorMsg=you are not logged in')
 		const db = await Database.open(dbName)
-    const record = await db.get(`SELECT * FROM items WHERE itemID = ${ctx.params.id};`)
+    	const record = await db.get(`SELECT * FROM items WHERE itemID = ${ctx.params.id};`)
     // check if the item exists
 		if(record === undefined) throw new Error('unrecognised item')
 		// check if the item is for sale
@@ -613,7 +618,6 @@ router.get('/buy/:id', async ctx => {
 	if (itemUser.username === ctx.session.user) 
 		return ctx.redirect(`/${ctx.params.id}?errorMsg=Seller cannot buy their own item`)
 	const user = await db.get(`SELECT * FROM users WHERE username = "${ctx.session.user}";`)
-  const basketLength = await db.get(`SELECT COUNT(*) FROM basket WHERE userID = "${user.userID}" AND itemID = "${ctx.params.id}";`)
   //Empty user's basket and add this item to it
 	await db.run(`DELETE FROM basket WHERE userID="${user.userID}";`)
 	await db.run(`INSERT INTO basket(userID, itemID) VALUES("${user.userID}", "${ctx.params.id}")`)

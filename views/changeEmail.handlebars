@@ -25,16 +25,16 @@
  			<p class="msg-danger">{{errorMsg}}</p>
 		{{/if}}
     <section class="container">
-        <div class="header">
+        <section class="header">
             <a href="/" class="header_logo center"><button><img src="WebxLogo.png"/></button></a>
-            <div id="sidemenu">
-                <div class="toggle-btn" onclick="toggleSidemenu()">
+            <section id="sidemenu">
+                <section class="toggle-btn" onclick="toggleSidemenu()">
                     <a>
                         <span></span>
                         <span></span>
                         <span></span>
                     </a>
-                </div>
+                </section>
                 <ul>
                     <a href="/"><li> Home  </li></a>
                     {{#if data.authorised}}
@@ -50,8 +50,8 @@
                     <a href="about"><li> About </li></a>
                     <a href="contact"><li> Contact </li></a>
                 </ul>
-            </div>
-        </div>
+            </section>
+        </section>
 
     <h2> Change your Email Address </h2>
     <hr>
@@ -60,10 +60,10 @@
 
             <p class = "spaceunderneath20"> Your current email adress : {{usEmail}} </p>
 
-             <div>
+             <section>
                 <label for="Email"><b>Email Address: </b></label>
                 <input type="email" placeholder="susan@example.com" name="emailAddress" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" required>
-            </div>
+            </section>
         
             <p><input type="submit" value="Change"></p>
         </form>

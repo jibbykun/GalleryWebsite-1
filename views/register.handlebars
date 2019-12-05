@@ -23,16 +23,16 @@
  			<p class="msg-danger">{{errorMsg}}</p>
 		{{/if}}
     <section class="container">
-        <div class="header">
+        <section class="header">
             <a href="/" class="header_logo center"><button><img src="WebxLogo.png"/></button></a>
-            <div id="sidemenu">
-                <div class="toggle-btn" onclick="toggleSidemenu()">
+            <section id="sidemenu">
+                <section class="toggle-btn" onclick="toggleSidemenu()">
                     <a>
                         <span></span>
                         <span></span>
                         <span></span>
                     </a>
-                </div>
+                </section>
                 <ul>
                     <a href="/"><li> Home  </li></a>
                     {{#if data.authorised}}
@@ -48,46 +48,46 @@
                     <a href="about"><li> About </li></a>
                     <a href="contact"><li> Contact </li></a>
                 </ul>
-            </div>
-        </div>
+            </section>
+        </section>
 
 
         
-        <div class="login-wrap">
+        <section class="login-wrap">
             <h2>Sign Up</h2>
             <p>Please fill in this form to create an account.</p>
-            <div class="login-form">
+            <section class="login-form">
                 <form action="/register" method="POST">
-                    <div>
+                    <section>
                         <label for="username"><b>Username</b></label>
                         <input type="text" placeholder="Enter Username" name="username" required>
-                    </div>
+                    </section>
 
-                    <div>
+                    <section>
                         <label for="Email"><b>Email Address</b></label>
                         <input type="email" placeholder="susan@example.com" name="emailAddress" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" required>
-                    </div>
+                    </section>
 
-                    <div>
+                    <section>
                         <label for="username"><b>Paypal Username</b></label>
                         <input type="username" placeholder="Enter Paypal Username" name="paypalUsername" required>
-                    </div>
+                    </section>
 
-                    <div>
+                    <section>
                         <label for="password"><b>Password</b></label>
                         <input type="password" placeholder="Enter Password" name="password" required>
-                    </div>
+                    </section>
                     
-                    <div>
+                    <section>
                         <label for="passwordRepeat"><b>Repeat Password</b></label>
                         <input type="password" placeholder="Repeat Password" name="passwordRepeat" required>
-                    </div>
+                    </section>
                     <p class="small">Your password must be at least 10 characters long, contain one uppercase character and one number.</p>
                     <p><input type="submit" value="Register"></p>
                 </form>
                 <a href="/login"><p>If you already have an account, Login Here</p></a>
-            </div>
-        </div>
+            </section>
+        </section>
     </section>
 </body>
 
