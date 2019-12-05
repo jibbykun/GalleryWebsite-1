@@ -596,6 +596,8 @@ router.get('/buy/:id', async ctx => {
  return ctx.redirect('/login?errorMsg=you are not logged in') 
 }
 	try {
+	const db = await Database.open(dbName)
+	const record = await db.get(`SELECT * FROM items WHERE itemID = ${ctx.params.id};`)
 	// Check if the user is logged in - or send them back to the login page
 	console.log(ctx.session.authorised)
 	if(ctx.session.authorised !== true) 
