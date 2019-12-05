@@ -607,8 +607,6 @@ router.get('/buy/:id', async ctx => {
 	console.log(ctx.session.authorised)
 	if(ctx.session.authorised !== true) 
 		return ctx.redirect('/login?errorMsg=you are not logged in')
-	const db = await Database.open(dbName)
-    const record = await db.get(`SELECT * FROM items WHERE itemID = ${ctx.params.id};`)
   // check if the item exists
 	if(record === undefined) throw new Error('unrecognised item')
 	// check if the item is for sale
