@@ -493,6 +493,20 @@ router.get('/edit/:id', async ctx => {
 	await ctx.render('edit', {data: data, record: record})
 })
 
+router.get('/remove/:id', async ctx => {
+	if (ctx.session.authorised !== true) {
+ return ctx.redirect('/login?errorMsg=you are not logged in') 
+}
+	// Check for validation messages
+	const db = await Database.open(dbName)
+	const data = {}
+	const record = await db.get(`DELETE FROM items WHERE itemID = "${ctx.params.id}";`)
+	if (ctx.query.errorMsg) data.errorMsg = ctx.query.errorMsg
+	if (ctx.query.successMsg) data.successMsg = ctx.query.successMsg
+	data.authorised = ctx.session.authorised
+	await ctx.redirect('/?successMsg=item removed successfully')
+})
+
 router.post('/edit/:id', koaBody, async ctx => {
 	if (ctx.session.authorised !== true) {
  return ctx.redirect('/login?errorMsg=you are not logged in') 

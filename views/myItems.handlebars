@@ -57,6 +57,7 @@
             {{#each items}}
                 <section class="gallery-item">
                     <a class="gallery-item-edit center" href="/edit/{{itemID}}"><h3>Edit item</h3></a>
+                    <a class="gallery-item-edit center" href="/remove/{{itemID}}"><h3>Remove item</h3></a>
                     <a href="/{{itemID}}">
                         <img src="{{imageDir1}}" alt="No picture found" width="600" height="400">
                         {{#if imageDir2}}
