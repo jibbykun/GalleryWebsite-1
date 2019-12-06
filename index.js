@@ -150,6 +150,8 @@ router.get('/checkout', async ctx =>{
 		items = await db.all(`SELECT * FROM items INNER JOIN basket ON basket.itemID=items.itemID WHERE basket.userID = "${user.userID}";`)
 		total += parseInt(items[i].price)
 	}
+	if (total == 0)
+		ctx.redirect("/basket?errorMsg=your basket is empty")
 	data.total = total
 	data.authorised = ctx.session.authorised
 
@@ -493,6 +495,20 @@ router.get('/edit/:id', async ctx => {
 	await ctx.render('edit', {data: data, record: record})
 })
 
+router.get('/remove/:id', async ctx => {
+	if (ctx.session.authorised !== true) {
+ return ctx.redirect('/login?errorMsg=you are not logged in') 
+}
+	// Check for validation messages
+	const db = await Database.open(dbName)
+	const data = {}
+	const record = await db.get(`DELETE FROM items WHERE itemID = "${ctx.params.id}";`)
+	if (ctx.query.errorMsg) data.errorMsg = ctx.query.errorMsg
+	if (ctx.query.successMsg) data.successMsg = ctx.query.successMsg
+	data.authorised = ctx.session.authorised
+	await ctx.redirect('/?successMsg=item removed successfully')
+})
+
 router.post('/edit/:id', koaBody, async ctx => {
 	if (ctx.session.authorised !== true) {
  return ctx.redirect('/login?errorMsg=you are not logged in') 
@@ -547,19 +563,20 @@ router.get('/:id', async ctx => {
     const userRecords = await db.get(`SELECT count(userID) AS count FROM users WHERE username="${ctx.session.user}";`)
     if(!userRecords.count) 
       throw new Error('User doesnt exist')
-    const userRecord = await db.get(`SELECT userID FROM users WHERE username = "${ctx.session.user}";`)
+    const userRecord = await db.get(`SELECT * FROM users WHERE username = "${ctx.session.user}";`)
     const favRecord = await db.get(`SELECT count(itemID) AS count FROM fav WHERE userID="${userRecord.userID}" AND itemID="${ctx.params.id}" AND favourite="true";`)
 	let favCount = await db.get(`SELECT count(itemID) AS count FROM fav WHERE itemID = "${ctx.params.id}";`)
 	favCount = favCount['count']
 	data.favourited = false
     if(favRecord.count) 
-      data.favourited = true
-		// set the data - item info + user info
-		record.username = itemUser.username
-		if(ctx.query.errorMsg) data.errorMsg = ctx.query.errorMsg
-		if(ctx.query.successMsg) data.successMsg = ctx.query.successMsg
-		data.authorised = ctx.session.authorised
-		await ctx.render('itemDetails', {record: record, data: data, favCount : favCount})
+	  data.favourited = true
+	record.picDir = `ProfilePictures/${  userRecord.profilePicture  }.png`
+	// set the data - item info + user info
+	record.username = itemUser.username
+	if(ctx.query.errorMsg) data.errorMsg = ctx.query.errorMsg
+	if(ctx.query.successMsg) data.successMsg = ctx.query.successMsg
+	data.authorised = ctx.session.authorised
+	await ctx.render('itemDetails', {record: record, data: data, favCount : favCount})
 	} catch(err) {
 		console.error(err.message)
 		await ctx.render('error', {message: err.message})
@@ -678,15 +695,15 @@ router.post('/search', async ctx => {
 		const body = ctx.request.body
 		const db = await Database.open(dbName)
 		const data = {}
-		// Check if there is a search result
-		const records = await db.get(`SELECT count(itemID) AS count FROM items WHERE item LIKE "%${body.search}%";`)
+		// Check if there is a search result 
+		const records = await db.get(`SELECT count(itemID) AS count FROM items WHERE item LIKE "%${body.search}%" OR sDescription LIKE "%${body.search}%" OR lDescription LIKE "%${body.search}%";`)
 		// no search result - go back
 		if (!records.count) {
  return ctx.redirect('/?errorMsg=No items found.') 
 }
 
 		// run the query and render the index page
-		const item = await db.all(`SELECT * FROM items WHERE item LIKE '%${body.search}%';`)
+		const item = await db.all(`SELECT * FROM items WHERE item LIKE "%${body.search}%" OR sDescription LIKE "%${body.search}%" OR lDescription LIKE "%${body.search}%";`)
 
 		await db.close()
 		await ctx.render('index', { items: item, data: data })

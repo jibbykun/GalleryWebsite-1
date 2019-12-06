@@ -18,11 +18,11 @@
 
 <body id="body">
 
-    	{{#if successMsg}}
- 			<p class="msg-success">{{successMsg}}</p>
+    	{{#if data.successMsg}}
+ 			<p class="msg-success">{{data.successMsg}}</p>
 		{{/if}}
-        {{#if errorMsg}}
- 			<p class="msg-danger">{{errorMsg}}</p>
+        {{#if data.errorMsg}}
+ 			<p class="msg-danger">{{data.errorMsg}}</p>
 		{{/if}}
     <section class="container">
         <section class="header">
