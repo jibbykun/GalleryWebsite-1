@@ -150,6 +150,8 @@ router.get('/checkout', async ctx =>{
 		items = await db.all(`SELECT * FROM items INNER JOIN basket ON basket.itemID=items.itemID WHERE basket.userID = "${user.userID}";`)
 		total += parseInt(items[i].price)
 	}
+	if (total == 0)
+		ctx.redirect("/basket?errorMsg=your basket is empty")
 	data.total = total
 	data.authorised = ctx.session.authorised
 
